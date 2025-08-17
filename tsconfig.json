@@ -9,8 +9,12 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/config": ["./src/config/*"],
-      "@/middlewares": ["./src/middlewares/*"]
+      "@/utils": ["./src/utils/"],
+      "@/utils/*": ["./src/utils/*"],
+      "@/config": ["./src/config/"],
+      "@/config/*": ["./src/config/*"],
+      "@/middlewares": ["./src/middlewares/"],
+      "@/middlewares/*": ["./src/middlewares/*"]
     },
 
     "typeRoots": ["./src/@types", "./node_modules/@types"],

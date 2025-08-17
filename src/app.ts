@@ -1,8 +1,11 @@
-import express, { ErrorRequestHandler } from "express";
-import { loggingMiddleware } from "@/middlewares/loggingMiddleware";
-import { requestId } from "@/middlewares/requestId";
-import { notFoundHandler } from "@/middlewares/notFound";
-import { errorHandler } from "@/middlewares/errorHandlerMiddleware";
+import express, { type ErrorRequestHandler } from "express";
+
+import {
+  requestId,
+  errorHandler,
+  notFoundHandler,
+  loggingMiddleware,
+} from "@/middlewares";
 
 const app = express();
 

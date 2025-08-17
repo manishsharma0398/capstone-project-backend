@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { ApiResponse } from "@/utils/apiResponse";
+
+import { ApiResponse } from "@/utils";
 
 /**
  * Middleware to handle 404 Not Found errors

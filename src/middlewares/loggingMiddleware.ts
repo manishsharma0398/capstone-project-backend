@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
-import { logger } from "@/config/logger";
+import { logger } from "@/config";
 
 export const loggingMiddleware = (
   req: Request,
