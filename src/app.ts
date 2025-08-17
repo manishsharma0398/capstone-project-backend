@@ -13,19 +13,16 @@ import { corsOptions } from "@/config";
 const app = express();
 
 // middlewares
-const setupMiddleware = (app: express.Application) => {
-  // Security
-  app.use(requestId);
-  app.use(cors(corsOptions));
 
-  // Performance
-  app.use(express.json());
+// Security
+app.use(requestId);
+app.use(cors({ ...corsOptions }));
 
-  // Monitoring
-  app.use(loggingMiddleware);
-};
+// Performance
+app.use(express.json());
 
-setupMiddleware(app);
+// Monitoring
+app.use(loggingMiddleware);
 
 // Routes
 app.get("/", (_, res) => {
