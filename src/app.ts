@@ -1,4 +1,5 @@
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
 import express, { type ErrorRequestHandler } from "express";
 
 // middlewares
@@ -9,6 +10,7 @@ import {
   loggingMiddleware,
 } from "@/middlewares";
 import { corsOptions } from "@/config";
+import { specs, swaggerUiOptions } from "@/docs";
 
 const app = express();
 
@@ -39,7 +41,9 @@ app.get("/health", (_, res) => {
   });
 });
 
-// TODO: setup swagger ui and swagger js doc
+// api docs
+app.use("/api-docs", swaggerUi.serve);
+app.get("/api-docs", swaggerUi.setup(specs, swaggerUiOptions));
 
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   return errorHandler(err, req, res, next);

@@ -9,12 +9,20 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-      "@/utils": ["./src/utils/"],
-      "@/utils/*": ["./src/utils/*"],
       "@/config": ["./src/config/"],
       "@/config/*": ["./src/config/*"],
+      "@/controllers": ["./src/controllers/"],
+      "@/controllers/*": ["./src/controllers/*"],
+      "@/docs": ["./src/docs/"],
+      "@/docs/*": ["./src/docs/*"],
       "@/middlewares": ["./src/middlewares/"],
-      "@/middlewares/*": ["./src/middlewares/*"]
+      "@/middlewares/*": ["./src/middlewares/*"],
+      "@/routes": ["./src/routes/"],
+      "@/routes/*": ["./src/routes/*"],
+      "@/services": ["./src/services/"],
+      "@/services/*": ["./src/services/*"],
+      "@/utils": ["./src/utils/"],
+      "@/utils/*": ["./src/utils/*"]
     },
 
     "typeRoots": ["./src/@types", "./node_modules/@types"],
