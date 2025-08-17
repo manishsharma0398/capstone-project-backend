@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/manishsharma0398/capstone-project-backend#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",
     "nodemon": "^3.1.10",
@@ -30,6 +31,7 @@
     "typescript": "^5.9.2"
   },
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "express": "^5.1.0",
     "uuid": "^11.1.0",

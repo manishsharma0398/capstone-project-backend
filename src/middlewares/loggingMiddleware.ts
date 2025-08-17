@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 
+// configs
 import { logger } from "@/config";
 
 export const loggingMiddleware = (

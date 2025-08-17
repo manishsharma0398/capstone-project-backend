@@ -1,6 +1,9 @@
 import { Request, Response, NextFunction } from "express";
 
+// configs
 import { logger } from "@/config";
+
+// utils
 import { ApiResponse, AppError } from "@/utils";
 
 export const errorHandler = (

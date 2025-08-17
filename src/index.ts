@@ -1,4 +1,6 @@
 import app from "@/app";
+
+// configs
 import { ENV, logger } from "@/config";
 
 app.listen(ENV.PORT, () => {

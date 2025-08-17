@@ -1,17 +1,31 @@
+import cors from "cors";
 import express, { type ErrorRequestHandler } from "express";
 
+// middlewares
 import {
   requestId,
   errorHandler,
   notFoundHandler,
   loggingMiddleware,
 } from "@/middlewares";
+import { corsOptions } from "@/config";
 
 const app = express();
 
-app.use(requestId);
-app.use(express.json());
-app.use(loggingMiddleware);
+// middlewares
+const setupMiddleware = (app: express.Application) => {
+  // Security
+  app.use(requestId);
+  app.use(cors(corsOptions));
+
+  // Performance
+  app.use(express.json());
+
+  // Monitoring
+  app.use(loggingMiddleware);
+};
+
+setupMiddleware(app);
 
 // Routes
 app.get("/", (_, res) => {
@@ -28,13 +42,14 @@ app.get("/health", (_, res) => {
   });
 });
 
+// TODO: setup swagger ui and swagger js doc
+
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   return errorHandler(err, req, res, next);
 };
 
 app.use(errorMiddleware);
 
-// Add this as the last middleware (before error handler)
 app.use(notFoundHandler);
 
 export default app;
