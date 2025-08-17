@@ -23,9 +23,7 @@ export class ApiResponse {
       success: false,
       message,
       code,
-      //   ...(process.env.NODE_ENV === "development" && {
       stack: new Error().stack,
-      //   }),
     });
   }
 }

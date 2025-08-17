@@ -24,7 +24,7 @@ export const loggingMiddleware = (
     };
 
     if (res.statusCode === 404) {
-      logger.error(`Route ${req.method} "${req.path}" not Found`, logData);
+      logger.error(`Route ${req.method} '${req.path}' not Found`, logData);
     } else if (res.statusCode >= 400) {
       logger.error("Request failed", logData);
     } else {
