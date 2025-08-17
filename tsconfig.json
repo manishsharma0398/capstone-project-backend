@@ -1,0 +1,69 @@
+{
+  // Visit https://aka.ms/tsconfig to read more about this file
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "node16",
+    "rootDir": "./",
+    "moduleResolution": "node16",
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/config": ["./src/config/*"],
+      "@/middlewares": ["./src/middlewares/*"]
+    },
+
+    "typeRoots": ["./src/@types", "./node_modules/@types"],
+    "types": ["node"],
+
+    "resolveJsonModule": true,
+    "allowJs": true,
+
+    "sourceMap": true,
+    // File Layout
+    "outDir": "./dist",
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+
+    "strict": true,
+    "skipLibCheck": true,
+
+    // Environment Settings
+    // See also https://aka.ms/tsconfig/module
+    // For nodejs:
+    // "lib": ["esnext"],
+    // "types": ["node"],
+    // and npm install -D @types/node
+
+    // Other Outputs
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Style Options
+    "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+
+    // Recommended Options
+    // "jsx": "react-jsx",
+    // "verbatimModuleSyntax": true,
+    // "isolatedModules": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force"
+  },
+  "ts-node": {
+    "transpileOnly": true,
+    "require": ["tsconfig-paths/register"],
+    "files": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
+}
