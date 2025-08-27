@@ -9,7 +9,11 @@ import {
   notFoundHandler,
   loggingMiddleware,
 } from "@/middlewares";
+
+// configs
 import { corsOptions } from "@/config";
+
+// api-docs
 import { specs, swaggerUiOptions } from "@/docs";
 
 const app = express();

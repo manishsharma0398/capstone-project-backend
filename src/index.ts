@@ -1,8 +1,8 @@
 import app from "@/app";
 
 // configs
-import { ENV, logger } from "@/config";
+import { Env, logger } from "@/config";
 
-app.listen(ENV.PORT, () => {
-  logger.info(`Server running on port ${ENV.PORT} in ${ENV.NODE_ENV} mode`);
+app.listen(Env.PORT, () => {
+  logger.info(`Server running on port ${Env.PORT} in ${Env.NODE_ENV} mode`);
 });

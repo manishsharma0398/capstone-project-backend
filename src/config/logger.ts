@@ -1,9 +1,7 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 
-import { ENV } from "./env";
-
-const level = ENV.NODE_ENV === "production" ? "info" : "debug";
+const level = process.env.NODE_ENV === "production" ? "info" : "debug";
 
 const transports: winston.transport[] = [
   new winston.transports.Console({

@@ -8,11 +8,14 @@
 
     "baseUrl": ".",
     "paths": {
+      "$/*": ["./*"],
       "@/*": ["./src/*"],
       "@/config": ["./src/config/"],
       "@/config/*": ["./src/config/*"],
       "@/controllers": ["./src/controllers/"],
       "@/controllers/*": ["./src/controllers/*"],
+      "@/db": ["./src/db/"],
+      "@/db/*": ["./src/db/*"],
       "@/docs": ["./src/docs/"],
       "@/docs/*": ["./src/docs/*"],
       "@/middlewares": ["./src/middlewares/"],
@@ -77,5 +80,10 @@
     "files": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules"],
+  "tsc-alias": {
+    // not sure about these
+    "resolveFullPaths": true,
+    "verbose": false
+  }
 }
