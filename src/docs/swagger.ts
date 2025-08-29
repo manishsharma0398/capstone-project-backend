@@ -1,5 +1,7 @@
 import swaggerJsdoc from "swagger-jsdoc";
-import { version } from "../../package.json";
+import packageJson from "../../package.json" with { type: "json" };
+
+const { version } = packageJson;
 
 const options: swaggerJsdoc.Options = {
   definition: {

@@ -3,12 +3,18 @@
   "version": "1.0.0",
   "description": "Backend for Community Connect",
   "main": "index.ts",
+  "type": "module",
   "scripts": {
-    "prebuild": "rm -rf ./dist",
-    "build": "tsc -p . && tsc-alias",
+    "clean": "rm -rf ./dist",
+    "clean:all": "npm run clean && rm -rf node_modules",
+    "build": "npm run clean && tsc -p . && tsc-alias",
     "dev": "nodemon",
     "prestart": "npm run build",
-    "start": "node dist/src/index.js"
+    "start": "node dist/src/index.js",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "cross-env IS_DB_MIGRATING=true tsx src/db/migrate.ts",
+    "db:seed": "cross-env IS_DB_SEEDING=true tsx src/db/seed.ts",
+    "drizzle-studio": "drizzle-kit studio"
   },
   "repository": {
     "type": "git",
@@ -27,9 +33,9 @@
     "@types/pg": "^8.15.5",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "cross-env": "^10.0.0",
     "drizzle-kit": "^0.31.4",
     "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
     "tsx": "^4.20.5",

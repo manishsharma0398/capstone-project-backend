@@ -10,7 +10,13 @@ const EnvSchema = z.object({
     .max(65535, "Port must be <= 65535")
     .default(8000),
   NODE_ENV: z.enum(["development", "production"]).default("development"),
-  DATABASE_URL: z.string().url(),
+  DB_NAME: z.string().trim(),
+  DB_HOST: z.string().trim(),
+  DB_PASSWORD: z.string().trim(),
+  DB_PORT: z.coerce.number().int().default(5432),
+  DB_USER: z.string().trim(),
+  IS_DB_MIGRATING: z.coerce.boolean().optional().default(false),
+  IS_DB_SEEDING: z.coerce.boolean().optional().default(false),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

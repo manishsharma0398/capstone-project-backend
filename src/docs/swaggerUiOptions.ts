@@ -1,4 +1,4 @@
-import { SwaggerUiOptions } from "swagger-ui-express";
+import type { SwaggerUiOptions } from "swagger-ui-express";
 
 export const swaggerUiOptions: SwaggerUiOptions = {
   explorer: true,

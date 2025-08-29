@@ -1,5 +1,7 @@
-import { Env } from "./src/config";
 import { defineConfig } from "drizzle-kit";
+
+// configd
+import { dbCredentials } from "@/db/config";
 
 export default defineConfig({
   dialect: "postgresql",
@@ -7,8 +9,5 @@ export default defineConfig({
   out: "./src/db/migrations",
   verbose: true,
   strict: true,
-  driver: "pglite",
-  dbCredentials: {
-    url: Env.DATABASE_URL,
-  },
+  dbCredentials,
 });
