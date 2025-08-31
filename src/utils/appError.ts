@@ -1,35 +1,35 @@
 import { StatusCodes, ReasonPhrases } from "http-status-codes";
 
 // error codes
-import type { ErrorCode } from "./errorCodes";
+import type { CustomStatusCodes } from "./statusCodes";
 
 interface AppErrorParams {
   message: string;
-  statusCode: StatusCodes;
-  code?: ReasonPhrases | ErrorCode;
-  isOperational?: boolean;
   details?: unknown;
+  isOperational?: boolean;
+  statusCode: StatusCodes;
+  code?: ReasonPhrases | CustomStatusCodes;
 }
 
 export class AppError extends Error {
-  public readonly statusCode: StatusCodes;
-  public readonly code: ReasonPhrases | ErrorCode;
-  public readonly isOperational: boolean;
   public readonly details?: unknown;
+  public readonly isOperational: boolean;
+  public readonly statusCode: StatusCodes;
+  public readonly code: ReasonPhrases | CustomStatusCodes;
 
   constructor({
     message,
-    statusCode = StatusCodes.INTERNAL_SERVER_ERROR,
-    code = ReasonPhrases.INTERNAL_SERVER_ERROR,
-    isOperational = true,
     details,
+    isOperational = true,
+    code = ReasonPhrases.INTERNAL_SERVER_ERROR,
+    statusCode = StatusCodes.INTERNAL_SERVER_ERROR,
   }: AppErrorParams) {
     super(message);
 
-    this.statusCode = statusCode;
     this.code = code;
-    this.isOperational = isOperational;
     this.details = details;
+    this.statusCode = statusCode;
+    this.isOperational = isOperational;
 
     Object.setPrototypeOf(this, new.target.prototype);
     Error.captureStackTrace(this, this.constructor);

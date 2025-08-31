@@ -1,5 +1,7 @@
-import { Env } from "@/config";
 import type { PoolConfig } from "pg";
+
+// config
+import { Env } from "@/config";
 
 export type DrizzleDbCredentials = {
   host: string;
@@ -7,8 +9,8 @@ export type DrizzleDbCredentials = {
   user: string;
   password: string;
   database: string;
-  ssl: boolean | { rejectUnauthorized: boolean };
   max: number | undefined;
+  ssl: boolean | { rejectUnauthorized: boolean };
 };
 
 export const dbCredentials: DrizzleDbCredentials = {

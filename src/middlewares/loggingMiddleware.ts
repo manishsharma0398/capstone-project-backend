@@ -12,14 +12,14 @@ export const loggingMiddleware = (
 
   res.on("finish", () => {
     const logData = {
-      requestId: req.requestId,
+      ip: req.ip,
       method: req.method,
       url: req.originalUrl,
       status: res.statusCode,
-      duration: `${Date.now() - startTime}ms`,
-      userAgent: req.get("user-agent"),
-      ip: req.ip,
       context: "HttpRequest",
+      requestId: req.requestId,
+      userAgent: req.get("user-agent"),
+      duration: `${Date.now() - startTime}ms`,
       query: Object.keys(req.query).length ? req.query : undefined,
       body: Object.keys(req.body || {}).length ? req.body : undefined,
     };

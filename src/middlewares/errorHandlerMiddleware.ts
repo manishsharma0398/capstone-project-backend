@@ -1,3 +1,4 @@
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import type { Request, Response, NextFunction } from "express";
 
 // configs
@@ -18,19 +19,19 @@ export const errorHandler = (
 
     return ApiResponse.error({
       res,
-      statusCode: error.statusCode,
-      message: error.message,
       code: error.code,
       errors: error.details,
+      message: error.message,
+      statusCode: error.statusCode,
     });
   }
 
-  // Non-operational → unexpected
-  logger.error("Unexpected error", error);
-
   return ApiResponse.error({
     res,
-    statusCode: 500,
-    message: "Internal server error",
+    errors: error,
+    logError: true,
+    message: "Unexpected error",
+    code: ReasonPhrases.INTERNAL_SERVER_ERROR,
+    statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
   });
 };

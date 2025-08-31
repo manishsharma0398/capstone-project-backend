@@ -17,7 +17,7 @@ import { googleCallback } from "@/controllers";
 import { Env } from "@/config";
 
 // utils
-import { AppError, ErrorCode, registry } from "@/utils";
+import { ApiResponse, AppError, CustomStatusCodes, registry } from "@/utils";
 
 // schemas
 import { createUserFromEmailSchema } from "@/schemas";
@@ -60,9 +60,9 @@ router.post(
 
     if (userExists) {
       throw new AppError({
-        message: "User Already registered. Please login",
         statusCode: StatusCodes.CONFLICT,
-        code: ErrorCode.USER_ALREADY_EXISTS,
+        code: CustomStatusCodes.USER_ALREADY_EXISTS,
+        message: "User Already registered. Please login",
       });
     }
 
@@ -99,10 +99,12 @@ router.post(
       maxAge: 60 * 60 * 1000, // 1hr
     });
 
-    // Return user data
-    return res.json({
+    return ApiResponse.success({
+      res,
+      data: user!,
+      statusCode: StatusCodes.CREATED,
       message: "User created Successfully",
-      user,
+      code: CustomStatusCodes.USER_SUCCESSFULLY_CREATED,
     });
   }
 );

@@ -1,45 +1,52 @@
 import type { Response } from "express";
+import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 // config
 import { Env, logger } from "@/config";
 
+// types
+import { CustomStatusCodes } from "./statusCodes";
+
 type SuccessParams<T = unknown> = {
   res: Response;
-  data?: T;
-  statusCode?: number;
   message?: string;
+  data?: T;
+  statusCode?: StatusCodes;
+  code?: ReasonPhrases | CustomStatusCodes;
 };
 
 type ErrorParams<E = unknown> = {
   res: Response;
   message: string;
-  errors?: E | E[] | Record<string, any>[] | Error;
-  statusCode?: number;
-  code?: string;
   logError?: boolean;
+  statusCode?: StatusCodes;
+  code?: ReasonPhrases | CustomStatusCodes;
+  errors?: E | E[] | Record<string, any>[] | Error;
 };
 
 export class ApiResponse {
   static success<T>({
     res,
     data,
-    statusCode = 200,
     message = "Success",
+    code = ReasonPhrases.OK,
+    statusCode = StatusCodes.OK,
   }: SuccessParams<T>): void {
     res.status(statusCode).json({
       success: true,
       message,
       data,
+      code,
     });
   }
 
   static error<E>({
     res,
-    message,
     errors,
-    statusCode = 400,
-    code,
+    message,
     logError = false,
+    code = ReasonPhrases.INTERNAL_SERVER_ERROR,
+    statusCode = StatusCodes.INTERNAL_SERVER_ERROR,
   }: ErrorParams<E>): void {
     const response: Record<string, unknown> = {
       success: false,
@@ -50,7 +57,7 @@ export class ApiResponse {
         errors instanceof Error && { stack: errors.stack }),
     };
 
-    if (logError || statusCode >= 500) {
+    if (logError) {
       logger.error(message, { response, statusCode });
     }
 
