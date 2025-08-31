@@ -17,6 +17,16 @@ const EnvSchema = z.object({
   DB_USER: z.string().trim(),
   IS_DB_MIGRATING: z.coerce.boolean().optional().default(false),
   IS_DB_SEEDING: z.coerce.boolean().optional().default(false),
+
+  JWT_SECRET: z.string().trim(),
+  GOOGLE_CLIENT_ID: z.string().trim(),
+  GOOGLE_CLIENT_SECRET: z.string().trim(),
+  GOOGLE_CALLBACK_URL: z
+    .url()
+    .trim()
+    .default("http://localhost:8000/auth/google/callback"),
+
+  CLIENT_BASE_URL: z.url().default("http://localhost:3000"),
 });
 
 export type Env = z.infer<typeof EnvSchema>;

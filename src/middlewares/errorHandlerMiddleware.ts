@@ -4,24 +4,33 @@ import type { Request, Response, NextFunction } from "express";
 import { logger } from "@/config";
 
 // utils
-import { ApiResponse, AppError } from "@/utils";
+import { ApiResponse, isAppError } from "@/utils";
 
 export const errorHandler = (
-  error: Error,
-  _: Request,
+  error: unknown,
+  _req: Request,
   res: Response,
   _next: NextFunction
-): void => {
-  logger.error({
-    message: error.message,
-    stack: error.stack,
-    context: "ErrorHandler",
-  });
+) => {
+  if (isAppError(error)) {
+    // Operational errorors → expected, log minimally
+    logger.warn(`[${error.code}] ${error.message}`, { details: error.details });
 
-  if (error instanceof AppError) {
-    ApiResponse.error(res, error.message, error.statusCode);
-    return;
+    return ApiResponse.error({
+      res,
+      statusCode: error.statusCode,
+      message: error.message,
+      code: error.code,
+      errors: error.details,
+    });
   }
 
-  ApiResponse.error(res, "Internal server error", 500);
+  // Non-operational → unexpected
+  logger.error("Unexpected error", error);
+
+  return ApiResponse.error({
+    res,
+    statusCode: 500,
+    message: "Internal server error",
+  });
 };

@@ -1,4 +1,3 @@
 export enum ErrorCode {
-  // Server Errors (6xxx)
-  INTERNAL_SERVER_ERROR = "ERR_6001",
+  USER_ALREADY_EXISTS = "USER_ALREADY_EXISTS",
 }

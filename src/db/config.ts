@@ -15,10 +15,10 @@ export const dbCredentials: DrizzleDbCredentials = {
   host: Env.DB_HOST,
   port: Env.DB_PORT,
   user: Env.DB_USER,
-  password: Env.DB_PASSWORD,
   database: Env.DB_NAME,
-  ssl: Env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
+  password: Env.DB_PASSWORD,
   max: Env.IS_DB_MIGRATING ? 1 : undefined,
+  ssl: Env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 };
 
 export const dbConfig: PoolConfig = {

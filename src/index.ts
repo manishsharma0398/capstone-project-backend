@@ -1,4 +1,6 @@
 import app from "@/app";
+
+// db
 import { pool } from "@/db";
 
 // configs

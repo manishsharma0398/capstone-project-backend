@@ -1,4 +1,6 @@
+import "dotenv/config";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import express, { type ErrorRequestHandler } from "express";
 
@@ -10,8 +12,12 @@ import {
   loggingMiddleware,
 } from "@/middlewares";
 
+// routes
+import { authRoutes } from "@/routes";
+
 // configs
 import { corsOptions } from "@/config";
+import passport, { initializePassport } from "@/config/strategies/passport";
 
 // api-docs
 import { specs, swaggerUiOptions } from "@/docs";
@@ -25,7 +31,10 @@ app.use(requestId);
 app.use(cors({ ...corsOptions }));
 
 // Performance
+app.use(cookieParser());
 app.use(express.json());
+app.use(passport.initialize());
+initializePassport();
 
 // Monitoring
 app.use(loggingMiddleware);
@@ -34,6 +43,8 @@ app.use(loggingMiddleware);
 app.get("/", (_, res) => {
   res.json({ message: "Hello from Community Connect Server!" });
 });
+
+app.use("/auth", authRoutes);
 
 // Health Check
 app.get("/health", (_, res) => {

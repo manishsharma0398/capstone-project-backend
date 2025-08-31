@@ -1,28 +1,40 @@
-import { ErrorCode } from "./errorCodes";
+import { StatusCodes, ReasonPhrases } from "http-status-codes";
+
+// error codes
+import type { ErrorCode } from "./errorCodes";
+
+interface AppErrorParams {
+  message: string;
+  statusCode: StatusCodes;
+  code?: ReasonPhrases | ErrorCode;
+  isOperational?: boolean;
+  details?: unknown;
+}
 
 export class AppError extends Error {
-  public readonly statusCode: number;
-  public readonly code: ErrorCode;
+  public readonly statusCode: StatusCodes;
+  public readonly code: ReasonPhrases | ErrorCode;
   public readonly isOperational: boolean;
-  public readonly details?: any;
+  public readonly details?: unknown;
 
-  constructor(
-    message: string,
-    statusCode: number = 500,
-    code: ErrorCode = ErrorCode.INTERNAL_SERVER_ERROR,
-    isOperational: boolean = true,
-    details?: any
-  ) {
+  constructor({
+    message,
+    statusCode = StatusCodes.INTERNAL_SERVER_ERROR,
+    code = ReasonPhrases.INTERNAL_SERVER_ERROR,
+    isOperational = true,
+    details,
+  }: AppErrorParams) {
     super(message);
+
     this.statusCode = statusCode;
     this.code = code;
     this.isOperational = isOperational;
     this.details = details;
 
+    Object.setPrototypeOf(this, new.target.prototype);
     Error.captureStackTrace(this, this.constructor);
   }
 }
 
-export const isAppError = (error: any): error is AppError => {
-  return error instanceof AppError;
-};
+export const isAppError = (error: unknown): error is AppError =>
+  error instanceof AppError;
