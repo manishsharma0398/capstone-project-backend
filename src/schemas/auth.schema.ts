@@ -4,6 +4,7 @@ import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 // db
 import { emailRegistrationBodySchema } from "@/db/schema";
 
+// middleware
 import { validationErrorHandler } from "@/middlewares";
 
 extendZodWithOpenApi(z);

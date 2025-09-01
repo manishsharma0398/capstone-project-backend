@@ -13,6 +13,7 @@ declare global {
     interface User extends CustomUserData {}
     interface Cookies extends CustomCookies {}
     interface Request {
+      startTime: number;
       requestId: string;
       user?: User;
       cookies?: Cookies;

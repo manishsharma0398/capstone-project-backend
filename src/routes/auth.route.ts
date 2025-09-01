@@ -100,6 +100,7 @@ router.post(
     });
 
     return ApiResponse.success({
+      req,
       res,
       data: user!,
       statusCode: StatusCodes.CREATED,

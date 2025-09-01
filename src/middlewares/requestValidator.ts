@@ -1,8 +1,5 @@
 import type { ErrorListItem, ErrorRequestHandler } from "express-zod-safe";
 
-// config
-import { logger } from "@/config";
-
 // utils
 import { ApiResponse } from "@/utils";
 
@@ -11,13 +8,11 @@ import { ApiResponse } from "@/utils";
  */
 export const validationErrorHandler: ErrorRequestHandler = (
   errors: ErrorListItem[] | undefined,
-  _req,
+  req,
   res,
   _next
 ) => {
   if (!errors) return;
-
-  logger.error("error", errors);
 
   const formatted = errors.flatMap((err) =>
     err.errors.issues.map((zErr) => ({
@@ -28,6 +23,7 @@ export const validationErrorHandler: ErrorRequestHandler = (
   );
 
   ApiResponse.error({
+    req,
     res,
     errors: formatted,
     message: "Validation Failed",

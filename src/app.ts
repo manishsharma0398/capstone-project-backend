@@ -15,6 +15,9 @@ import {
 // routes
 import { authRoutes } from "@/routes";
 
+// utils
+import { ApiResponse } from "@/utils";
+
 // configs
 import { corsOptions } from "@/config";
 import passport, { initializePassport } from "@/config/strategies/passport";
@@ -40,25 +43,35 @@ initializePassport();
 app.use(loggingMiddleware);
 
 // Routes
-app.get("/", (_, res) => {
-  res.json({ message: "Hello from Community Connect Server!" });
+app.get("/", (req, res) => {
+  ApiResponse.success({
+    req,
+    res,
+    message: "Hello from Community Connect Server!",
+  });
 });
 
-app.use("/auth", authRoutes);
-
 // Health Check
-app.get("/health", (_, res) => {
-  res.json({
-    status: "ok",
-    timestamp: new Date(),
-    uptime: process.uptime(),
-    memoryUsage: process.memoryUsage(),
+app.get("/health", (req, res) => {
+  ApiResponse.success({
+    data: {
+      status: "ok",
+      timestamp: new Date(),
+      uptime: process.uptime(),
+      memoryUsage: process.memoryUsage(),
+    },
+    req,
+    res,
+    message: "Health Check OK",
   });
 });
 
 // api docs
 app.use("/api-docs", swaggerUi.serve);
 app.get("/api-docs", swaggerUi.setup(specs, swaggerUiOptions));
+
+// other routes
+app.use("/auth", authRoutes);
 
 const errorMiddleware: ErrorRequestHandler = (err, req, res, next) => {
   return errorHandler(err, req, res, next);
