@@ -12,7 +12,7 @@ export const providersEnum = pg.pgEnum("providers", [
 export const users = pg.pgTable(
   "users",
   {
-    id: pg.serial("id").primaryKey().unique().notNull(),
+    id: pg.serial("id").primaryKey().notNull(),
     email: pg.varchar("email").unique(),
     phone: pg.varchar("phone").unique(),
     firstName: pg.varchar("first_name", { length: 256 }),
@@ -30,9 +30,7 @@ export const users = pg.pgTable(
     isPhoneVerified: pg.boolean("is_phone_verified").default(false),
     phoneVerifiedAt: pg.timestamp("phone_verified_at"),
   },
-  (table) => [
-    pg.uniqueIndex("id_idx").on(table.id),
-    pg.uniqueIndex("email_idx").on(table.email),
+  () => [
     pg.check(
       "email_required_if_not_phone",
       sql`provider = 'phone' OR email IS NOT NULL`

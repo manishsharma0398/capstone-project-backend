@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
+
 import { users } from "./user";
 
 export const verificationTypeEnum = pg.pgEnum("verificationType", [
@@ -11,7 +12,7 @@ export const verificationTypeEnum = pg.pgEnum("verificationType", [
 export const verifications = pg.pgTable(
   "verifications",
   {
-    id: pg.serial("id").primaryKey().unique().notNull(),
+    id: pg.serial("id").primaryKey().notNull(),
     userId: pg.integer("user_id").notNull(),
 
     type: verificationTypeEnum("verification_type").notNull(),
@@ -30,15 +31,11 @@ export const verifications = pg.pgTable(
       .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
   },
   (table) => [
-    pg.uniqueIndex("id_idx").on(table.id),
-    pg.index("userId_idx").on(table.userId),
-    pg
-      .index("user_verification_idx")
-      .on(table.userId, table.type, table.isUsed),
+    pg.index("verification_userId_idx").on(table.userId),
     pg.foreignKey({
       columns: [table.userId],
       foreignColumns: [users.id],
-      name: "user_fk",
+      name: "fk_verifications_user_id",
     }),
     pg.check("expires_in_future", sql`expires_at > CURRENT_TIMESTAMP`),
   ]

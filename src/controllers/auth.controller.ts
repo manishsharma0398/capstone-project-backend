@@ -11,7 +11,7 @@ import { AppError, CookieManager, COOKIES } from "@/utils";
 export const googleCallback = (req: Request, res: Response) => {
   if (!req.user) {
     throw new AppError({
-      message: "Unauthorized",
+      message: "Unauthorized - No user found",
       code: ReasonPhrases.UNAUTHORIZED,
       statusCode: StatusCodes.UNAUTHORIZED,
     });

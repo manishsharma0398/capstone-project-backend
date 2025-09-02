@@ -1,12 +1,16 @@
-import db from "$/src/db";
-import { users } from "$/src/db/schema";
 import { type PassportStatic } from "passport";
 import {
   Strategy as GoogleStrategy,
   type VerifyCallback,
   type Profile,
 } from "passport-google-oauth20";
-import { Env } from "../env";
+
+// db
+import db from "@/db";
+import { users } from "@/db/schema";
+
+// config
+import { Env } from "@/config";
 
 const googleLoginStrategy = (passports: PassportStatic) => {
   passports.use(
@@ -14,7 +18,7 @@ const googleLoginStrategy = (passports: PassportStatic) => {
       {
         clientID: Env.GOOGLE_CLIENT_ID,
         clientSecret: Env.GOOGLE_CLIENT_SECRET,
-        callbackURL: "/auth/google/callback",
+        callbackURL: Env.GOOGLE_CALLBACK_URL,
       },
       async (
         _accessToken: string,
@@ -31,6 +35,7 @@ const googleLoginStrategy = (passports: PassportStatic) => {
               firstName: profile.name?.givenName!,
               lastName: profile.name?.familyName!,
               email: profile?.emails?.[0]?.value!,
+              provider: "google",
             })
             .returning();
           done(null, user[0]);

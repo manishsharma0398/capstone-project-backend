@@ -11,7 +11,7 @@ export const errorHandler = (
   _next: NextFunction
 ) => {
   if (isAppError(error)) {
-    ApiResponse.error({
+    return ApiResponse.error({
       req,
       res,
       code: error.code,
@@ -21,7 +21,7 @@ export const errorHandler = (
     });
   }
 
-  ApiResponse.error({
+  return ApiResponse.error({
     req,
     res,
     errors: error,
