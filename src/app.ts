@@ -1,6 +1,5 @@
 import "dotenv/config";
 import cors from "cors";
-import cookieParser from "cookie-parser";
 import swaggerUi from "swagger-ui-express";
 import express, { type ErrorRequestHandler } from "express";
 
@@ -10,6 +9,7 @@ import {
   errorHandler,
   notFoundHandler,
   loggingMiddleware,
+  cookieMiddleware,
 } from "@/middlewares";
 
 // routes
@@ -34,8 +34,8 @@ app.use(requestId);
 app.use(cors({ ...corsOptions }));
 
 // Performance
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieMiddleware);
 app.use(passport.initialize());
 initializePassport();
 

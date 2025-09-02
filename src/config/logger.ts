@@ -1,7 +1,18 @@
 import winston from "winston";
 import DailyRotateFile from "winston-daily-rotate-file";
 
+// utils
+import { getRequestIdFromContext } from "@/utils/requestContext";
+
 let loggerInstance: winston.Logger | null = null;
+
+const requestIdFormat = winston.format((info) => {
+  const requestId = getRequestIdFromContext();
+  if (requestId && !info.requestId) {
+    info.requestId = requestId;
+  }
+  return info;
+});
 
 export const getLogger = (): winston.Logger => {
   if (loggerInstance) {
@@ -14,6 +25,7 @@ export const getLogger = (): winston.Logger => {
     new winston.transports.Console({
       level,
       format: winston.format.combine(
+        requestIdFormat(),
         winston.format.colorize(),
         winston.format.simple()
       ),
@@ -34,6 +46,7 @@ export const getLogger = (): winston.Logger => {
   ];
 
   const format: winston.Logform.Format = winston.format.combine(
+    requestIdFormat(),
     winston.format.timestamp(),
     winston.format.json(),
     winston.format.errors({ stack: true }),

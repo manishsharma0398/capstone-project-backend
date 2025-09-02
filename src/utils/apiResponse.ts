@@ -37,15 +37,15 @@ export class ApiResponse {
     statusCode = StatusCodes.OK,
   }: SuccessParams<T>): Response {
     const response = {
-      requestId: req.requestId,
+      success: true,
       message,
       data,
-      success: true,
     };
 
     const apiRes = {
-      ...response,
       code,
+      requestId: req.requestId,
+      ...response,
     };
 
     logger.info("Outgoing Response", {
@@ -72,7 +72,6 @@ export class ApiResponse {
   }: ErrorParams<E>): Response {
     const response: Record<string, unknown> = {
       success: false,
-      requestId: req.requestId,
       message,
       ...(code && { code }),
       ...(errors && !(errors instanceof Error) && { errors }),
@@ -80,12 +79,17 @@ export class ApiResponse {
         errors instanceof Error && { stack: errors.stack }),
     };
 
+    const apiRes = {
+      requestId: req.requestId,
+      ...response,
+    };
+
     logger.error("Outgoing Response (Error)", {
       method: req.method,
       url: req.originalUrl,
       status: statusCode,
       duration: `${Date.now() - req.startTime}ms`,
-      contentLength: Buffer.byteLength(JSON.stringify(response)),
+      contentLength: Buffer.byteLength(JSON.stringify(apiRes)),
       context: "HttpResponse",
       event: "outgoing",
       ...(errors instanceof Error
@@ -94,6 +98,6 @@ export class ApiResponse {
       response,
     });
 
-    return res.status(statusCode).json(response);
+    return res.status(statusCode).json(apiRes);
   }
 }

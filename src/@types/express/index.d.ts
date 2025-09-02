@@ -1,22 +1,35 @@
 import { InferModel } from "drizzle-orm";
+
 import { users } from "@/db/schema";
 
-export type CustomUserData = InferModel<typeof users>;
+import type { CookieData } from "@/utils/cookieManager";
 
-export interface CustomCookies {
-  jwtToken?: string;
-  refreshToken?: string;
-}
+export type CustomUserData = InferModel<typeof users>;
 
 declare global {
   namespace Express {
     interface User extends CustomUserData {}
-    interface Cookies extends CustomCookies {}
     interface Request {
       startTime: number;
       requestId: string;
       user?: User;
-      cookies?: Cookies;
+      cookies?: Record<string, string | undefined> & CookieData;
+      signedCookies?: Record<string, string | undefined> & Partial<CookieData>;
     }
+  }
+}
+
+declare module "express" {
+  interface Request {
+    cookies?: Record<string, string | undefined> & CookieData;
+    signedCookies?: Record<string, string | undefined> & Partial<CookieData>;
+  }
+}
+
+// Also try extending the core module
+declare module "express-serve-static-core" {
+  interface Request {
+    cookies?: Record<string, string | undefined> & CookieData;
+    signedCookies?: Record<string, string | undefined> & Partial<CookieData>;
   }
 }

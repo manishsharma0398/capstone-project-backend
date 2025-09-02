@@ -27,7 +27,6 @@
   },
   "homepage": "https://github.com/manishsharma0398/capstone-project-backend#readme",
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
@@ -49,7 +48,7 @@
   "dependencies": {
     "@asteasolutions/zod-to-openapi": "^8.1.0",
     "argon2": "^0.44.0",
-    "cookie-parser": "^1.4.7",
+    "cookie": "^1.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
     "drizzle-orm": "^0.44.5",

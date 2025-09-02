@@ -1,9 +1,9 @@
 import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import passport from "passport";
-import { Router } from "express";
 import { eq } from "drizzle-orm";
 import validate from "express-zod-safe";
+import { Router, type Request } from "express";
 import { StatusCodes } from "http-status-codes";
 
 // db
@@ -17,7 +17,14 @@ import { googleCallback } from "@/controllers";
 import { Env } from "@/config";
 
 // utils
-import { ApiResponse, AppError, CustomStatusCodes, registry } from "@/utils";
+import {
+  ApiResponse,
+  AppError,
+  CustomStatusCodes,
+  registry,
+  CookieManager,
+  COOKIES,
+} from "@/utils";
 
 // schemas
 import { createUserFromEmailSchema } from "@/schemas";
@@ -52,7 +59,7 @@ registry.registerPath({
 router.post(
   "/register/email",
   validate(createUserFromEmailSchema),
-  async (req, res) => {
+  async (req: Request, res) => {
     const userExists = await db.query.users.findFirst({
       where: eq(users.email, req.body.email!),
       columns: { id: true },
@@ -92,12 +99,7 @@ router.post(
       }
     );
 
-    res.cookie("jwt-token", token, {
-      httpOnly: true,
-      secure: Env.NODE_ENV === "production",
-      sameSite: "lax",
-      maxAge: 60 * 60 * 1000, // 1hr
-    });
+    CookieManager.setCookie(res, COOKIES.JWT_TOKEN, token);
 
     return ApiResponse.success({
       req,
@@ -124,7 +126,7 @@ router.get(
 // router.get("/user", passport.authenticate("jwt", { session: false }));
 
 router.post("/logout", (_req, res) => {
-  res.clearCookie("token", { httpOnly: true, sameSite: "lax" });
+  CookieManager.clearAuthCookies(res);
   return res.status(200).json({ message: "Logged out successfully" });
 });
 

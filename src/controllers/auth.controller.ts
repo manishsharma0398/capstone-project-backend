@@ -6,7 +6,7 @@ import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import { Env } from "@/config";
 
 // utils
-import { AppError } from "@/utils";
+import { AppError, CookieManager, COOKIES } from "@/utils";
 
 export const googleCallback = (req: Request, res: Response) => {
   if (!req.user) {
@@ -21,10 +21,7 @@ export const googleCallback = (req: Request, res: Response) => {
     expiresIn: 60 * 60, // 1hr
   });
 
-  res.cookie("jwt-token", token, {
-    httpOnly: true,
-    sameSite: "lax",
-  });
+  CookieManager.setCookie(res, COOKIES.ACCESS_TOKEN, token);
 
   return res.redirect(
     `${Env.CLIENT_BASE_URL}/success-google-login?access_token=${token}`

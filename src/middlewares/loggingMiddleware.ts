@@ -3,15 +3,16 @@ import type { Request, Response, NextFunction } from "express";
 // configs
 import { logger } from "@/config";
 
+const sensitiveKeys = [
+  "password",
+  "token",
+  "authorization",
+  "secret",
+  "apikey",
+];
+
 const sanitizeBody = (body: Record<string, any>) => {
   const clone = { ...body };
-  const sensitiveKeys = [
-    "password",
-    "token",
-    "authorization",
-    "secret",
-    "apikey",
-  ];
   for (const key of sensitiveKeys) {
     if (clone[key]) clone[key] = "[REDACTED]";
   }
@@ -27,7 +28,6 @@ export const loggingMiddleware = (
     ip: req.ip,
     method: req.method,
     url: req.originalUrl,
-    requestId: req.requestId,
     userAgent: req.get("user-agent"),
     body: Object.keys(req.body || {}).length
       ? sanitizeBody(req.body)
