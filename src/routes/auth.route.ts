@@ -1,30 +1,17 @@
-import argon2 from "argon2";
-import jwt from "jsonwebtoken";
 import passport from "passport";
-import { eq } from "drizzle-orm";
+import { Router } from "express";
 import validate from "express-zod-safe";
-import { Router, type Request } from "express";
-import { StatusCodes } from "http-status-codes";
-
-// db
-import db from "@/db";
-import { users } from "@/db/schema/user";
 
 // controller
-import { googleCallback } from "@/controllers";
-
-// configs
-import { Env } from "@/config";
+import {
+  logOut,
+  googleCallback,
+  loginWithEmail,
+  registerWithEmail,
+} from "@/controllers";
 
 // utils
-import {
-  ApiResponse,
-  AppError,
-  CustomStatusCodes,
-  registry,
-  CookieManager,
-  COOKIES,
-} from "@/utils";
+import { registry } from "@/utils";
 
 // schemas
 import { createUserFromEmailSchema } from "@/schemas";
@@ -59,57 +46,7 @@ registry.registerPath({
 router.post(
   "/register/email",
   validate(createUserFromEmailSchema),
-  async (req: Request, res) => {
-    const userExists = await db.query.users.findFirst({
-      where: eq(users.email, req.body.email!),
-      columns: { id: true },
-    });
-
-    if (userExists) {
-      throw new AppError({
-        statusCode: StatusCodes.CONFLICT,
-        code: CustomStatusCodes.USER_ALREADY_EXISTS,
-        message: "User Already registered. Please login",
-      });
-    }
-
-    const passwordHash = await argon2.hash(req.body.password);
-
-    const [user] = await db
-      .insert(users)
-      .values({ ...req.body, provider: "local", passwordHash })
-      .returning({
-        id: users.id,
-        email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        role: users.role,
-        provider: users.provider,
-      });
-
-    const token = jwt.sign(
-      {
-        sub: user?.id,
-        role: user?.role,
-        provider: user?.provider,
-      },
-      Env.JWT_SECRET,
-      {
-        expiresIn: "1hr",
-      }
-    );
-
-    CookieManager.setCookie(res, COOKIES.JWT_TOKEN, token);
-
-    return ApiResponse.success({
-      req,
-      res,
-      data: user!,
-      statusCode: StatusCodes.CREATED,
-      message: "User created Successfully",
-      code: CustomStatusCodes.USER_SUCCESSFULLY_CREATED,
-    });
-  }
+  registerWithEmail
 );
 
 router.get(
@@ -125,9 +62,8 @@ router.get(
 
 // router.get("/user", passport.authenticate("jwt", { session: false }));
 
-router.post("/logout", (_req, res) => {
-  CookieManager.clearAuthCookies(res);
-  return res.status(200).json({ message: "Logged out successfully" });
-});
+router.post("/login", loginWithEmail);
+
+router.post("/logout", logOut);
 
 export default router;

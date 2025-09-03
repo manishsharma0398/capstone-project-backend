@@ -20,10 +20,11 @@ export const users = pg.pgTable(
     role: rolesEnum("role").default("volunteer").notNull(),
     provider: providersEnum("provider").default("local").notNull(),
     passwordHash: pg.text("password_hash"),
-    createdAt: pg.timestamp("created_at").defaultNow(),
+    createdAt: pg.timestamp("created_at").defaultNow().notNull(),
     updatedAt: pg
       .timestamp("updated_at")
       .defaultNow()
+      .notNull()
       .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
     isEmailVerified: pg.boolean("is_email_verified").default(false),
     emailVerifiedAt: pg.timestamp("email_verified_at"),

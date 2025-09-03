@@ -4,7 +4,7 @@ import { users } from "@/db/schema";
 
 import type { CookieData } from "@/utils/cookieManager";
 
-export type CustomUserData = InferModel<typeof users>;
+export type CustomUserData = InferModel<typeof users> | NormalizedGoogleUser;
 
 declare global {
   namespace Express {
