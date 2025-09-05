@@ -1,20 +1,15 @@
-// src/openapi.ts
-import {
-  OpenAPIRegistry,
-  OpenApiGeneratorV3,
-} from "@asteasolutions/zod-to-openapi";
+import { OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
 
-// configs
 import { Env } from "@/config";
 
-export const registry = new OpenAPIRegistry();
+import { registry } from "@/docs/openapiRegistry";
 
 export function generateOpenAPIDocument() {
   const generator = new OpenApiGeneratorV3(registry.definitions);
   return generator.generateDocument({
     openapi: "3.0.0",
     info: {
-      title: "My API",
+      title: "Community Connect API",
       version: "1.0.0",
     },
     servers: [{ url: `http://localhost:${Env.PORT}` }],

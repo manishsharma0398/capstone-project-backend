@@ -21,6 +21,8 @@
     "outDir": "./dist",
     "sourceMap": true,
 
+    "experimentalDecorators": true,
+
     // if not transpiling with ts
     // "moduleResolution": "Bundler",
     // "module": "esnext",

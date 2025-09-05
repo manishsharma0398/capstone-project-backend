@@ -1,3 +1,4 @@
+import z from "zod";
 import { sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
@@ -47,9 +48,14 @@ export const users = pg.pgTable(
   ]
 );
 
-export const emailRegistrationBodySchema = createInsertSchema(users).pick({
-  email: true,
-  firstName: true,
-  lastName: true,
-  role: true,
-});
+export const emailRegistrationBodySchema = createInsertSchema(users)
+  .pick({
+    email: true,
+    firstName: true,
+    lastName: true,
+  })
+  .extend({
+    email: z.email().trim().toLowerCase(),
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+  });

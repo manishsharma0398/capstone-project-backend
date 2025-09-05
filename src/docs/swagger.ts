@@ -1,54 +1,22 @@
-import swaggerJsdoc from "swagger-jsdoc";
-import packageJson from "../../package.json" with { type: "json" };
+import type { Express } from "express";
+import swaggerUi from "swagger-ui-express";
 
-const { version } = packageJson;
+import { swaggerUiOptions } from "./swaggerUiOptions";
+import { generateOpenAPIDocument } from "../utils/openapi";
 
-const options: swaggerJsdoc.Options = {
-  definition: {
-    openapi: "3.0.0",
-    info: {
-      title: "Community Connect API",
-      version,
-      description: "API documentation for Community Connect",
-      license: {
-        name: "MIT",
-        url: "https://opensource.org/licenses/MIT",
-      },
-    },
-    servers: [
-      {
-        url: "/api",
-        description: "API server",
-      },
-    ],
-    components: {
-      securitySchemes: {
-        bearerAuth: {
-          type: "http",
-          scheme: "bearer",
-          bearerFormat: "JWT",
-        },
-      },
-      responses: {
-        UnauthorizedError: {
-          description: "Access token is missing or invalid",
-          content: {
-            "application/json": {
-              schema: {
-                type: "object",
-                properties: {
-                  success: { type: "boolean", example: false },
-                  message: { type: "string" },
-                  code: { type: "string" },
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  },
-  apis: ["./src/routes/*.ts", "./src/docs/schemas/*.yml"],
-};
+export function setupSwagger(app: Express) {
+  // generate OpenAPI spec
+  const openApiDoc = generateOpenAPIDocument();
 
-export const specs = swaggerJsdoc(options);
+  // serve raw OpenAPI JSON
+  app.get("/openapi.json", (_req, res) => {
+    res.json(openApiDoc);
+  });
+
+  // serve Swagger UI
+  app.use(
+    "/docs",
+    swaggerUi.serve,
+    swaggerUi.setup(openApiDoc, swaggerUiOptions)
+  );
+}
