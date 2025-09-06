@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 
 // db
 import db from "@/db";
-import { users } from "@/db/schema";
+import { users, type RoleType } from "@/db/schema";
 
 // utils
 import { AppError, CustomStatusCodes } from "@/utils";
@@ -89,6 +89,7 @@ export class AuthService {
     password: string;
     firstName: string;
     lastName: string;
+    role?: RoleType;
   }) {
     const userExists = await db.query.users.findFirst({
       where: eq(users.email, data.email!),
@@ -107,14 +108,19 @@ export class AuthService {
 
     const [user] = await db
       .insert(users)
-      .values({ ...data, provider: "local", passwordHash })
+      .values({
+        ...data,
+        passwordHash,
+        provider: "local",
+        role: data?.role || "volunteer",
+      })
       .returning({
         id: users.id,
-        email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
         role: users.role,
+        email: users.email,
+        lastName: users.lastName,
         provider: users.provider,
+        firstName: users.firstName,
       });
 
     if (!user) {

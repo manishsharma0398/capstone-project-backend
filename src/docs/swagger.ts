@@ -1,8 +1,8 @@
 import type { Express } from "express";
 import swaggerUi from "swagger-ui-express";
 
+import { generateOpenAPIDocument } from "@/utils";
 import { swaggerUiOptions } from "./swaggerUiOptions";
-import { generateOpenAPIDocument } from "../utils/openapi";
 
 export function setupSwagger(app: Express) {
   // generate OpenAPI spec

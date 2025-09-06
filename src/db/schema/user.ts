@@ -48,14 +48,22 @@ export const users = pg.pgTable(
   ]
 );
 
+const allRoles = rolesEnum.enumValues;
+const registerableRoles = allRoles.filter((role) => role !== "admin");
+
+export type ProviderType = (typeof providersEnum.enumValues)[number];
+export type RoleType = (typeof rolesEnum.enumValues)[number];
+
 export const emailRegistrationBodySchema = createInsertSchema(users)
   .pick({
     email: true,
     firstName: true,
     lastName: true,
+    role: true,
   })
   .extend({
     email: z.email().trim().toLowerCase(),
     firstName: z.string().min(1, "First name is required"),
     lastName: z.string().min(1, "Last name is required"),
+    role: z.enum(registerableRoles).default("volunteer").optional(),
   });
