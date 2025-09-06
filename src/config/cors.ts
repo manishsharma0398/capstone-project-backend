@@ -1,11 +1,17 @@
 import type { CorsOptions } from "cors";
 
-const whitelist: Array<string> = [
-  "http://localhost:3000",
-  "localhost:3000",
-  "http://127.0.0.1:3000",
-  "127.0.0.1:3000",
-];
+const allowedLocalPorts: Array<number> = [8000, 3000];
+
+const generateWishlist = (ports: number[]): string[] => {
+  const hosts = ["localhost", "127.0.0.1"];
+  const protocols = ["http://", ""]; // with and without protocol
+
+  return ports.flatMap((port) =>
+    hosts.flatMap((host) => protocols.map((proto) => `${proto}${host}:${port}`))
+  );
+};
+
+const whitelist: Array<string> = generateWishlist(allowedLocalPorts);
 
 export const corsOptions: CorsOptions = {
   origin: function (

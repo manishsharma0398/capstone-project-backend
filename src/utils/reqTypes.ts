@@ -1,13 +1,21 @@
-import { z } from "zod";
+import { ZodObject, type ZodRawShape } from "zod";
+import type { RouteConfig } from "@asteasolutions/zod-to-openapi";
 
-export type SchemaObject = {
-  body?: z.ZodTypeAny;
-  query?: z.ZodTypeAny;
-  params?: z.ZodTypeAny;
+export interface OpenApiOptions {
+  tags?: string[];
+  summary?: string;
+  description?: string;
+  responses?: RouteConfig["responses"];
+}
+
+// For just the validation part (used by Validate decorator)
+export type SchemaPart = {
+  body?: ZodObject<ZodRawShape>;
+  query?: ZodObject<ZodRawShape>;
+  params?: ZodObject<ZodRawShape>;
 };
 
-export type InferRequest<S extends SchemaObject> = {
-  body: S["body"] extends z.ZodTypeAny ? z.infer<S["body"]> : {};
-  query: S["query"] extends z.ZodTypeAny ? z.infer<S["query"]> : {};
-  params: S["params"] extends z.ZodTypeAny ? z.infer<S["params"]> : {};
+export type SchemaObject = {
+  schema: SchemaPart;
+  openapi?: OpenApiOptions;
 };

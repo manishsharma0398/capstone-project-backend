@@ -1,26 +1,17 @@
+import { ZodError } from "zod";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import type { Request, Response, NextFunction } from "express";
-import { ZodError, type ZodObject, type ZodRawShape } from "zod";
 
 // utils
-import { AppError } from "@/utils";
+import { AppError, type SchemaPart } from "@/utils";
 
-export type SchemaObject = {
-  body?: ZodObject<ZodRawShape>;
-  query?: ZodObject<ZodRawShape>;
-  params?: ZodObject<ZodRawShape>;
-};
-
-export function Validate(schema: SchemaObject) {
+export function Validate(schema: SchemaPart) {
   return function (
     _target: any,
     _propertyKey: string,
     descriptor: PropertyDescriptor
   ) {
     const originalMethod = descriptor.value;
-
-    console.log("Debug Validate decorator _target", _target);
-    console.log("Debug Validate decorator _propertyKey", _propertyKey);
 
     descriptor.value = async function (
       req: Request,

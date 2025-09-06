@@ -31,12 +31,8 @@ class AuthRoutes {
   }
 
   @Route("post", "/register/email")
-  @Validate(createUserFromEmailSchema)
-  @OpenApi(createUserFromEmailSchema, {
-    summary: "Register user with email",
-    description: "Creates a user with email/password",
-    tags: ["Auth"],
-  })
+  @Validate(createUserFromEmailSchema.schema)
+  @OpenApi(createUserFromEmailSchema)
   handleRegisterWithEmail(req: Request, res: Response) {
     return AuthController.registerWithEmail(req, res);
   }

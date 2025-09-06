@@ -1,5 +1,10 @@
-import type { RouteHandler } from "@/library/routes";
 import type { RequestHandler, Express } from "express";
+
+import type {
+  HandlerItem,
+  RouteHandler,
+  EnhancedHandler,
+} from "@/library/routes";
 
 export function Route(
   method: keyof Express,
@@ -7,9 +12,6 @@ export function Route(
   ...middleware: RequestHandler[]
 ) {
   return (target: any, propertyKey: string, descriptor: PropertyDescriptor) => {
-    console.log("Debug Route decorator target", target);
-    console.log("Debug Route decorator propertyKey", propertyKey);
-
     const pending: RouteHandler =
       Reflect.getMetadata("pendingRoutes", target) || new Map();
 
@@ -17,10 +19,15 @@ export function Route(
       pending.set(method, new Map());
     }
 
-    pending.get(method)?.set(path, [...middleware, descriptor.value]);
-    Reflect.defineMetadata("pendingRoutes", pending, target);
+    const handlerStack: HandlerItem[] = [
+      ...middleware,
+      {
+        handler: descriptor.value,
+        methodName: propertyKey,
+      } as EnhancedHandler,
+    ];
 
-    // 🔑 save route info directly on the method
-    Reflect.defineMetadata("routeInfo", { method, path }, target, propertyKey);
+    pending.get(method)?.set(path, handlerStack);
+    Reflect.defineMetadata("pendingRoutes", pending, target);
   };
 }
