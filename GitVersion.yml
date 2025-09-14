@@ -9,16 +9,43 @@ commit-message-incrementing: Enabled
 
 branches:
   master:
-    regex: ^master$
-    increment: Patch
     mode: ContinuousDelivery
+    tag: ""
+    increment: Patch
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
 
   feature:
-    regex: ^(feat|feature)[/-]
-    increment: Minor
     mode: ContinuousDelivery
+    tag: "alpha.{BranchName}"
+    increment: Minor
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+    regex: ^(feat|feature)[/-]
 
   hotfix:
-    regex: ^(fix|hotfix)[/-]
-    increment: Patch
     mode: ContinuousDelivery
+    tag: "beta.{BranchName}"
+    increment: Patch
+    prevent-increment-of-merged-branch-version: false
+    track-merge-target: false
+    regex: ^(fix|hotfix)[/-]
+
+  release:
+    mode: ContinuousDelivery
+    tag: "rc"
+    increment: None
+    prevent-increment-of-merged-branch-version: true
+    track-merge-target: false
+    regex: ^releases?[/-]
+
+  pull-request:
+    mode: ContinuousDelivery
+    tag: "PullRequest.{BranchName}"
+    increment: Inherit
+    prevent-increment-of-merged-branch-version: false
+    tag-number-pattern: '[/-](?<number>\d+)[/-]'
+    regex: ^(pull|pull\-requests|pr)[/-]
+
+ignore:
+  sha: []
