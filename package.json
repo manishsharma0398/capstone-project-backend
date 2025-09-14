@@ -5,12 +5,14 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
+    "commit": "cz",
+    "prepare": "husky",
     "clean": "rm -rf ./dist",
     "clean:all": "npm run clean && rm -rf node_modules",
     "build": "npm run clean && tsc -p . && tsc-alias",
-    "dev": "nodemon",
     "prestart": "npm run build",
     "start": "node dist/src/index.js",
+    "dev": "nodemon",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "cross-env IS_DB_MIGRATING=true tsx src/db/migrate.ts",
     "db:seed": "cross-env IS_DB_SEEDING=true tsx src/db/seed.ts",
@@ -28,6 +30,8 @@
   },
   "homepage": "https://github.com/manishsharma0398/capstone-project-backend#readme",
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
@@ -38,8 +42,12 @@
     "@types/pg": "^8.15.5",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "commitizen": "^4.3.1",
     "cross-env": "^10.0.0",
+    "cz-conventional-changelog": "^3.3.0",
     "drizzle-kit": "^0.31.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.6",
     "nodemon": "^3.1.10",
     "tsc-alias": "^1.8.16",
     "tsconfig-paths": "^4.2.0",
@@ -72,5 +80,6 @@
   },
   "engines": {
     "node": ">=22.17.1"
-  }
+  },
+  "packageManager": "pnpm@10.16.0"
 }
