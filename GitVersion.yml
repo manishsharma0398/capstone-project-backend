@@ -10,14 +10,14 @@ commit-message-incrementing: Enabled
 branches:
   master:
     mode: ContinuousDelivery
-    tag: ""
+    label: ""
     increment: Patch
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
 
   feature:
     mode: ContinuousDelivery
-    tag: "alpha.{BranchName}"
+    label: "alpha.{BranchName}"
     increment: Minor
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
@@ -25,7 +25,7 @@ branches:
 
   hotfix:
     mode: ContinuousDelivery
-    tag: "beta.{BranchName}"
+    label: "beta.{BranchName}"
     increment: Patch
     prevent-increment-of-merged-branch-version: false
     track-merge-target: false
@@ -33,7 +33,7 @@ branches:
 
   release:
     mode: ContinuousDelivery
-    tag: "rc"
+    label: "rc"
     increment: None
     prevent-increment-of-merged-branch-version: true
     track-merge-target: false
