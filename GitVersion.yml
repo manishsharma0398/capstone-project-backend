@@ -1,13 +1,24 @@
+mode: ContinuousDelivery
+increment: Patch
+
+major-version-bump-message: '\+semver:\s?(breaking|major|release)'
+minor-version-bump-message: '\+semver:\s?(feat|feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
+
+commit-message-incrementing: Enabled
+
 branches:
+  master:
+    regex: ^master$
+    increment: Patch
+    mode: ContinuousDelivery
+
   feature:
     regex: ^(feat|feature)[/-]
     increment: Minor
     mode: ContinuousDelivery
+
   hotfix:
     regex: ^(fix|hotfix)[/-]
-    increment: Patch
-    mode: ContinuousDelivery
-  master:
-    regex: ^master$
     increment: Patch
     mode: ContinuousDelivery
