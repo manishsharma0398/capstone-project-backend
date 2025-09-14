@@ -25,16 +25,16 @@ jobs:
       - name: Install dependencies
         run: npm i -g pnpm && pnpm install --frozen-lockfile
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 6.0.x
+
       - name: Run GitVersion
         id: gitversion
         uses: GitTools/actions/gitversion/execute@v0.10.2
         with:
           useConfigFile: true
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: 6.0.x
 
       - name: Update package.json version
         run: |
