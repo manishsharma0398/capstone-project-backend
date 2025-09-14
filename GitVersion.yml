@@ -33,7 +33,7 @@ branches:
 
   pull-request:
     mode: ContinuousDelivery
-    tag: "PullRequest.{BranchName}"
+    label: "PullRequest.{BranchName}"
     increment: Inherit
     tag-number-pattern: '[/-](?<number>\d+)[/-]'
     regex: ^(pull|pull\-requests|pr)[/-]
