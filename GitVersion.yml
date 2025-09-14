@@ -1,12 +1,13 @@
-mode: MainLine
-
 branches:
   feature:
     regex: ^(feat|feature)[/-]
     increment: Minor
+    mode: ContinuousDelivery
   hotfix:
     regex: ^(fix|hotfix)[/-]
     increment: Patch
+    mode: ContinuousDelivery
   master:
     regex: ^master$
     increment: Patch
+    mode: ContinuousDelivery
