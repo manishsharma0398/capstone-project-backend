@@ -12,6 +12,7 @@ branches:
     mode: ContinuousDelivery
     label: ""
     increment: Patch
+    regex: ^master$
 
   feature:
     mode: ContinuousDelivery
