@@ -9,34 +9,34 @@ commit-message-incrementing: Enabled
 
 branches:
   master:
+    regex: ^master$
     mode: ContinuousDelivery
     label: ""
     increment: Patch
-    regex: ^master$
 
   feature:
+    regex: ^(feat|feature)[/-]
     mode: ContinuousDelivery
     label: "alpha.{BranchName}"
     increment: Minor
-    regex: ^(feat|feature)[/-]
 
   hotfix:
+    regex: ^(fix|hotfix)[/-]
     mode: ContinuousDelivery
     label: "beta.{BranchName}"
     increment: Patch
-    regex: ^(fix|hotfix)[/-]
 
   release:
+    regex: ^releases?[/-]
     mode: ContinuousDelivery
     label: "rc"
     increment: None
-    regex: ^releases?[/-]
 
   pull-request:
+    regex: ^(pull|pull\-requests|pr)[/-]
     mode: ContinuousDelivery
     label: "PullRequest.{BranchName}"
     increment: Inherit
-    regex: ^(pull|pull\-requests|pr)[/-]
 
 ignore:
   sha: []
