@@ -35,6 +35,7 @@ jobs:
         uses: GitTools/actions/gitversion/execute@v4
         with:
           configFilePath: GitVersion.yml
+          additionalArguments: /l off
 
       - name: Update package.json version
         run: |
