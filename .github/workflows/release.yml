@@ -15,7 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0 # GitVersion needs full history
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -24,6 +24,23 @@ jobs:
 
       - name: Install dependencies
         run: npm i -g pnpm && pnpm install --frozen-lockfile
+
+      - name: Setup GitVersion
+        uses: GitTools/actions/gitversion/setup@v4
+        with:
+          versionSpec: "6.x"
+
+      - name: Run GitVersion
+        id: gitversion
+        uses: GitTools/actions/gitversion/execute@v4
+        with:
+          configFilePath: GitVersion.yml
+
+      - name: Update package.json version
+        run: |
+          VERSION=${{ steps.gitversion.outputs.semVer }}
+          echo "Using version $VERSION"
+          npm version $VERSION --no-git-tag-version
 
       - name: Run Semantic Release
         env:
