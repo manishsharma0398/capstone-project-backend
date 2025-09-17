@@ -1,82 +1,40 @@
 name: Release
 
 on:
-  push:
-    branches:
-      - master
-      - "feat/*"
-      - "fix/*"
-      - "hotfix/*"
+  workflow_call:
+    inputs:
+      git-tag:
+        required: true
+        type: string
 
 jobs:
   release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # GitVersion needs full history
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      - name: Install dependencies
-        run: npm i -g pnpm && pnpm install --frozen-lockfile
-
-      - name: Setup GitVersion
-        uses: GitTools/actions/gitversion/setup@v3
-        with:
-          versionSpec: "5.x"
-
-      - name: Debug GitVersion
+      - name: Create git tag
+        env:
+          VERSION: ${{ env.git-tag }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        if: github.ref == 'refs/heads/master'
         run: |
-          ls -la .
-          cat GitVersion.yml
-          dotnet-gitversion /config GitVersion.yml /diag
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Run GitVersion
-        id: gitversion
-        uses: GitTools/actions/gitversion/execute@v3
-        with:
-          useConfigFile: true
-          configFilePath: GitVersion.yml
-
-      # after the Run GitVersion step (id: gitversion)
-      - name: Build custom version string
-        id: build_version
-        run: |
-          # Use the environment variables written by the GitVersion action
-          MAJOR=${{ env.GitVersion_Major }}
-          MINOR=${{ env.GitVersion_Minor }}
-          PATCH=${{ env.GitVersion_Patch }}
-          BRANCH=${{ env.GitVersion_EscapedBranchName }}
-          COMMITS=${{ env.GitVersion_CommitsSinceVersionSource }}
-
-          # Fallback if CommitsSinceVersionSource is empty
-          if [ -z "$COMMITS" ]; then
-            COMMITS=${{ env.GitVersion_BuildMetaData }} || true
+          if git tag -l "v${VERSION}" | grep -q .; then
+            echo "Tag v${VERSION} already exists, skipping."
+          else
+            git tag -a "v${VERSION}" -m "Release v${VERSION}"
+            git push origin "v${VERSION}"
           fi
 
-          VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
-          echo "Built VERSION=${VERSION}"
-          echo "VERSION=${VERSION}" >> $GITHUB_ENV
-        shell: bash
-
-      - name: Update package.json version (no git tag)
-        run: |
-          echo "Setting package.json version to $VERSION"
+      - name: Create GitHub Release
         env:
-          VERSION: ${{ env.VERSION }}
-
-      # - name: Update package.json version
-      #   run: |
-      #     VERSION=${{ steps.gitversion.outputs.semVer }}
-      #     echo "Using version $VERSION"
-      #     npm version $VERSION --no-git-tag-version
-
-      # - name: Run Semantic Release
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   run: npx semantic-release
+          VERSION: ${{ env.git-tag }}
+        if: github.ref == 'refs/heads/master'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "v${{ env.VERSION }}"
+          name: "Release v${{ env.VERSION }}"
+          body: |
+            ## Changes in this release
+            $(git log --pretty=format:"- %s (%h)" -n 20)

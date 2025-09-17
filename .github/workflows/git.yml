@@ -1,0 +1,46 @@
+name: Git
+
+on:
+  workflow_call: {}
+
+jobs:
+  git:
+    runs-on: ubuntu-latest
+    outputs:
+      git-tag: ${{ steps.gitversion.outputs.git-tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # GitVersion needs full history
+
+      - name: Setup GitVersion
+        uses: GitTools/actions/gitversion/setup@v3
+        with:
+          versionSpec: "5.x"
+
+      - name: Run GitVersion
+        id: gitversion
+        uses: GitTools/actions/gitversion/execute@v3
+        with:
+          useConfigFile: true
+          configFilePath: GitVersion.yml
+
+      - name: Build custom version string
+        id: build_version
+        run: |
+          MAJOR=${{ env.GitVersion_Major }}
+          MINOR=${{ env.GitVersion_Minor }}
+          PATCH=${{ env.GitVersion_Patch }}
+          BRANCH=${{ env.GitVersion_EscapedBranchName }}
+          COMMITS=${{ env.GitVersion_CommitsSinceVersionSource }}
+
+          # Fallback if CommitsSinceVersionSource is empty
+          if [ -z "$COMMITS" ]; then
+            COMMITS=${{ env.GitVersion_BuildMetaData }} || true
+          fi
+
+          VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
+          echo "Built custom VERSION=$VERSION"
+          echo "git-tag=$VERSION" >> $GITHUB_OUTPUT
+        shell: bash

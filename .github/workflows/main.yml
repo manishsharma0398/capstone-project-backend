@@ -1,0 +1,23 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - master
+      - "feat/*"
+      - "fix/*"
+      - "hotfix/*"
+
+jobs:
+  git:
+    uses: ./.github/workflows/git.yml
+
+  build:
+    needs: git
+    uses: ./.github/workflows/build.yml
+
+  release:
+    needs: [git, build]
+    uses: ./.github/workflows/release.yml
+    with:
+      git-tag: ${{ needs.git.outputs.git-tag }}
