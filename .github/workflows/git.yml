@@ -42,4 +42,4 @@ jobs:
 
           VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
           echo "Built custom VERSION=$VERSION"
-          echo "git-tag=$VERSION" >> $GITHUB_OUTPUT
+          echo "git-tag=test-manish" >> $GITHUB_OUTPUT
