@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Create git tag
         env:
-          VERSION: ${{ env.git-tag }}
+          VERSION: ${{ inputs.git-tag }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: github.ref == 'refs/heads/master'
         run: |
@@ -29,7 +29,7 @@ jobs:
 
       - name: Create GitHub Release
         env:
-          VERSION: ${{ env.git-tag }}
+          VERSION: ${{ inputs.git-tag }}
         if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v1
         with:
