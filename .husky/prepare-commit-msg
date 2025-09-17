@@ -1,1 +1,4 @@
-exec < /dev/tty && git cz --hook || true
+# Only run commitizen if the commit message is empty (interactive mode)
+if [ -z "$(cat $1)" ]; then
+  exec < /dev/tty && git cz --hook || true
+fi
