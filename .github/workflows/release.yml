@@ -26,13 +26,13 @@ jobs:
         run: npm i -g pnpm && pnpm install --frozen-lockfile
 
       - name: Setup GitVersion
-        uses: GitTools/actions/gitversion/setup@v4
+        uses: GitTools/actions/gitversion/setup@v3
         with:
-          versionSpec: "6.x"
+          versionSpec: "5.x"
 
       - name: Run GitVersion
         id: gitversion
-        uses: GitTools/actions/gitversion/execute@v4
+        uses: GitTools/actions/gitversion/execute@v3
         with:
           configFilePath: GitVersion.yml
 
