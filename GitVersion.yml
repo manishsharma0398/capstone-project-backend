@@ -7,36 +7,38 @@ patch-version-bump-message: '\+semver:\s?(fix|patch)'
 
 commit-message-incrementing: Enabled
 
+next-version: 0.1.0
+
 branches:
   master:
     mode: ContinuousDelivery
     label: ""
     increment: Patch
-    regex: ^master$
+    regex: "^master$"
 
   feature:
     mode: ContinuousDelivery
     label: "alpha.{BranchName}"
     increment: Minor
-    regex: ^(feat|feature)[/-]
+    regex: "^(feat|feature)[/-]"
 
   hotfix:
     mode: ContinuousDelivery
     label: "beta.{BranchName}"
     increment: Patch
-    regex: ^(fix|hotfix)[/-]
+    regex: "^(fix|hotfix)[/-]"
 
   release:
     mode: ContinuousDelivery
     label: "rc"
     increment: None
-    regex: ^releases?[/-]
+    regex: "^releases?[/-]"
 
   pull-request:
     mode: ContinuousDelivery
     label: "PullRequest.{BranchName}"
     increment: Inherit
-    regex: ^(pull|pull\-requests|pr)[/-]
+    regex: "^(pull|pull-requests|pr)[/-]"
 
 ignore:
   sha: []
