@@ -34,6 +34,7 @@ jobs:
         id: gitversion
         uses: GitTools/actions/gitversion/execute@v3
         with:
+          useConfigFile: true
           configFilePath: GitVersion.yml
 
       - name: Update package.json version
