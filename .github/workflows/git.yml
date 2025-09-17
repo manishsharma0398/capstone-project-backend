@@ -7,7 +7,7 @@ jobs:
   runner:
     runs-on: ubuntu-latest
     outputs:
-      git-tag: ${{ steps.gitversion.outputs.git-tag }}
+      git-tag: ${{ steps.build_version.outputs.git-tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
