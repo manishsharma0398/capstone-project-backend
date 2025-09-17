@@ -43,13 +43,40 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Update package.json version
+      # after the Run GitVersion step (id: gitversion)
+      - name: Build custom version string
+        id: build_version
         run: |
-          VERSION=${{ steps.gitversion.outputs.semVer }}
-          echo "Using version $VERSION"
-          npm version $VERSION --no-git-tag-version
+          # Use the environment variables written by the GitVersion action
+          MAJOR=${{ env.GitVersion_Major }}
+          MINOR=${{ env.GitVersion_Minor }}
+          PATCH=${{ env.GitVersion_Patch }}
+          BRANCH=${{ env.GitVersion_EscapedBranchName }}
+          COMMITS=${{ env.GitVersion_CommitsSinceVersionSource }}
 
-      - name: Run Semantic Release
+          # Fallback if CommitsSinceVersionSource is empty
+          if [ -z "$COMMITS" ]; then
+            COMMITS=${{ env.GitVersion_BuildMetaData }} || true
+          fi
+
+          VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
+          echo "Built VERSION=${VERSION}"
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Update package.json version (no git tag)
+        run: |
+          echo "Setting package.json version to $VERSION"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+          VERSION: ${{ env.VERSION }}
+
+      # - name: Update package.json version
+      #   run: |
+      #     VERSION=${{ steps.gitversion.outputs.semVer }}
+      #     echo "Using version $VERSION"
+      #     npm version $VERSION --no-git-tag-version
+
+      # - name: Run Semantic Release
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   run: npx semantic-release
