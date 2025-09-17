@@ -43,4 +43,3 @@ jobs:
           VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
           echo "Built custom VERSION=$VERSION"
           echo "git-tag=$VERSION" >> $GITHUB_OUTPUT
-        shell: bash

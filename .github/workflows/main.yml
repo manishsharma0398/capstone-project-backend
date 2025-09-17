@@ -17,14 +17,11 @@ jobs:
     uses: ./.github/workflows/build.yml
 
   release:
-    needs: [git, build]
     runs-on: ubuntu-latest
+    needs: [git, build]
+    # uses: ./.github/workflows/release.yml
     steps:
-      - run: echo "Git tag from git job: ${{ needs.git.outputs.git-tag }}"
-
-
-  # release:
-  #   needs: [git, build]
-  #   uses: ./.github/workflows/release.yml
-  #   with:
-  #     git-tag: ${{ needs.git.outputs.git-tag }}
+      - name: test
+        run: echo $needs.git.outputs
+    # env:
+    #   git-tag: ${{ needs.git.outputs.git-tag }}
