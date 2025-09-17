@@ -1,15 +1,6 @@
-mode: ContinuousDelivery
-increment: Patch
-
 commit-message-incrementing: Enabled
 
 branches:
-  master:
-    regex: ^master$
-    mode: ContinuousDelivery
-    increment: Patch
-    label: ""
-
   feature:
     regex: ^(feat|feature)[/-]
     mode: ContinuousDelivery
@@ -21,15 +12,3 @@ branches:
     mode: ContinuousDelivery
     increment: Patch
     label: "beta.{BranchName}"
-
-  release:
-    regex: ^releases?[/-]
-    mode: ContinuousDelivery
-    increment: None
-    label: "rc"
-
-  pull-request:
-    regex: ^(pull|pull\-requests|pr)[/-]
-    mode: ContinuousDelivery
-    increment: Inherit
-    label: "PullRequest.{BranchName}"
