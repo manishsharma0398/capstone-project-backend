@@ -1,42 +1,35 @@
 mode: ContinuousDelivery
 increment: Patch
 
-major-version-bump-message: "\\+semver:\\s?(breaking|major|release)"
-minor-version-bump-message: "\\+semver:\\s?(feat|feature|minor)"
-patch-version-bump-message: "\\+semver:\\s?(fix|patch)"
-
 commit-message-incrementing: Enabled
 
 branches:
   master:
     regex: ^master$
     mode: ContinuousDelivery
-    label: ""
     increment: Patch
+    label: ""
 
   feature:
     regex: ^(feat|feature)[/-]
     mode: ContinuousDelivery
-    label: "alpha.{BranchName}"
     increment: Minor
+    label: "alpha.{BranchName}"
 
   hotfix:
     regex: ^(fix|hotfix)[/-]
     mode: ContinuousDelivery
-    label: "beta.{BranchName}"
     increment: Patch
+    label: "beta.{BranchName}"
 
   release:
     regex: ^releases?[/-]
     mode: ContinuousDelivery
-    label: "rc"
     increment: None
+    label: "rc"
 
   pull-request:
     regex: ^(pull|pull\-requests|pr)[/-]
     mode: ContinuousDelivery
-    label: "PullRequest.{BranchName}"
     increment: Inherit
-
-ignore:
-  sha: []
+    label: "PullRequest.{BranchName}"
