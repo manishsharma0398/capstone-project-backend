@@ -12,5 +12,8 @@ jobs:
         with:
           node-version: 22
 
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Install dependencies
         run: npm i -g pnpm && pnpm install --frozen-lockfile
