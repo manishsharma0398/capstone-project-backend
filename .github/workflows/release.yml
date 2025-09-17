@@ -30,6 +30,12 @@ jobs:
         with:
           versionSpec: "5.x"
 
+      - name: Debug GitVersion
+        run: |
+          ls -la .
+          cat GitVersion.yml
+          dotnet-gitversion /config GitVersion.yml /diag
+
       - name: Run GitVersion
         id: gitversion
         uses: GitTools/actions/gitversion/execute@v3
