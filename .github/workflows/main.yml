@@ -21,7 +21,5 @@ jobs:
     needs: [git, build]
     # uses: ./.github/workflows/release.yml
     steps:
-      - name: test
-        run: echo $needs.git.outputs
-    # env:
-    #   git-tag: ${{ needs.git.outputs.git-tag }}
+      - name: Show all needs
+        run: echo '${{ toJSON(needs) }}'
