@@ -17,6 +17,7 @@ branches:
   feature:
     mode: ContinuousDelivery
     regex: ^(feat|feature)[/-]
+    label: useBranchName
     increment: Minor
     prevent-increment-of-merged-branch-version: false
 
