@@ -27,8 +27,14 @@ jobs:
       - name: Save git tags to artifact
         id: gittag
         run: |
-          echo "SEMVER=${{ env.GitVersion_SemVer }}" >> build.env
-          echo "FULL_SEMVER=${{ env.GitVersion_FullSemVer }}" >> build.env
+          if [ "${{ env.GitVersion_BranchName }}" = "master" ]; then
+            VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}"
+          else
+            VERSION="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-${{ env.GitVersion_EscapedBranchName }}.${{ env.GitVersion_CommitsSinceVersionSource }}"
+          fi
+
+          echo "SEMVER=$VERSION" >> build.env
+          echo "Built VERSION=$VERSION"
 
       - name: Upload version artifact
         uses: actions/upload-artifact@v4
