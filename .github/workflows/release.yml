@@ -7,6 +7,11 @@ jobs:
   runner:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download version artifact
         uses: actions/download-artifact@v4
         with:
@@ -17,7 +22,8 @@ jobs:
         run: |
           cat build.env
           export $(cat build.env | xargs)
-          echo "Using GIT_TAG=$GIT_TAG"
+          echo "Using SEMVER=$SEMVER"
+          echo "GIT_TAG=$SEMVER" >> $GITHUB_ENV
         shell: bash
 
       - name: Create git tag
