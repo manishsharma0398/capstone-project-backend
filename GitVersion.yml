@@ -46,5 +46,5 @@ branches:
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
-    label: "{BranchName}.{CommitsSinceVersionSource}"
-    tag-number-pattern: '[/-](?<number>\d+)'
+    # label: "{BranchName}.{CommitsSinceVersionSource}"
+    # tag-number-pattern: '[/-](?<number>\d+)'
