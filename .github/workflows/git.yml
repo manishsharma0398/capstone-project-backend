@@ -38,7 +38,11 @@ jobs:
             COMMITS=${{ env.GitVersion_BuildMetaData }} || true
           fi
 
-          VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
+          if [ "$BRANCH" = "master" ]; then
+            VERSION="${MAJOR}.${MINOR}.${PATCH}"
+          else
+            VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
+          fi
 
           echo "Built custom VERSION=$VERSION"
           echo "GIT_TAG=$VERSION" > build.env
