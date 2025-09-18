@@ -10,7 +10,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # GitVersion needs full history
+          fetch-depth: 0
 
       - name: Setup GitVersion
         uses: GitTools/actions/gitversion/setup@v3
@@ -29,15 +29,9 @@ jobs:
         run: |
           echo "SEMVER=${{ env.GitVersion_SemVer }}" >> build.env
           echo "FULL_SEMVER=${{ env.GitVersion_FullSemVer }}" >> build.env
-          echo "BRANCH=${{ env.GitVersion_BranchName }}" >> build.env
-
-          echo "Debugging..."
-          echo "SEMVER = ${{ env.GitVersion_SemVer }}"
-          echo "FULL_SEMVER = ${{ env.GitVersion_FullSemVer }}"
-          echo "BRANCH = ${{ env.GitVersion_BranchName }}"
 
       - name: Upload version artifact
         uses: actions/upload-artifact@v4
         with:
-          name: version
+          name: tags
           path: build.env
