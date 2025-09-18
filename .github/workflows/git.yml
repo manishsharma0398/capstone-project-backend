@@ -6,6 +6,9 @@ on:
 jobs:
   runner:
     runs-on: ubuntu-latest
+    outputs:
+      semVer: ${{ steps.gitversion.outputs.SemVer }}
+      fullsemver: ${{ steps.gitversion.outputs.semVer }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,31 +27,31 @@ jobs:
           useConfigFile: true
           configFilePath: GitVersion.yml
 
-      - name: Build custom version string
-        id: build_version
-        run: |
-          MAJOR=${{ env.GitVersion_Major }}
-          MINOR=${{ env.GitVersion_Minor }}
-          PATCH=${{ env.GitVersion_Patch }}
-          BRANCH=${{ env.GitVersion_EscapedBranchName }}
-          COMMITS=${{ env.GitVersion_CommitsSinceVersionSource }}
+      # - name: Build custom version string
+      #   id: build_version
+      #   run: |
+      #     MAJOR=${{ env.GitVersion_Major }}
+      #     MINOR=${{ env.GitVersion_Minor }}
+      #     PATCH=${{ env.GitVersion_Patch }}
+      #     BRANCH=${{ env.GitVersion_EscapedBranchName }}
+      #     COMMITS=${{ env.GitVersion_CommitsSinceVersionSource }}
 
-          # Fallback if CommitsSinceVersionSource is empty
-          if [ -z "$COMMITS" ]; then
-            COMMITS=${{ env.GitVersion_BuildMetaData }} || true
-          fi
+      #     # Fallback if CommitsSinceVersionSource is empty
+      #     if [ -z "$COMMITS" ]; then
+      #       COMMITS=${{ env.GitVersion_BuildMetaData }} || true
+      #     fi
 
-          if [ "$BRANCH" = "master" ]; then
-            VERSION="${MAJOR}.${MINOR}.${PATCH}"
-          else
-            VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
-          fi
+      #     if [ "$BRANCH" = "master" ]; then
+      #       VERSION="${MAJOR}.${MINOR}.${PATCH}"
+      #     else
+      #       VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
+      #     fi
 
-          echo "Built custom VERSION=$VERSION"
-          echo "GIT_TAG=$VERSION" > build.env
+      #     echo "Built custom VERSION=$VERSION"
+      #     echo "GIT_TAG=$VERSION" > build.env
 
-      - name: Upload version artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: version
-          path: build.env
+      # - name: Upload version artifact
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: version
+      #     path: build.env
