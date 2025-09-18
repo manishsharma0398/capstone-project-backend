@@ -13,31 +13,38 @@ branches:
     regex: ^master$
     increment: Patch
     prevent-increment-of-merged-branch-version: true
+    tag: "" # clean tags, just x.x.x
+    label: "" # don’t append anything
 
   feature:
     mode: ContinuousDelivery
     regex: ^(feat|feature)[/-]
-    tag: useBranchName
     increment: Minor
     prevent-increment-of-merged-branch-version: false
+    tag: useBranchName
+    label: "{BranchName}.{CommitsSinceVersionSource}"
 
   hotfix:
     mode: ContinuousDelivery
     regex: ^(fix|hotfix)[/-]
-    tag: useBranchName
     increment: Patch
     prevent-increment-of-merged-branch-version: false
+    tag: useBranchName
+    label: "{BranchName}.{CommitsSinceVersionSource}"
 
   release:
     mode: ContinuousDelivery
     regex: ^releases?[/-]
     increment: None
     prevent-increment-of-merged-branch-version: true
+    tag: "" # clean tags, just x.x.x
+    label: "" # don’t append anything
 
   pull-request:
     mode: ContinuousDelivery
     regex: ^(pull|pull\-requests|pr)[/-]
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
-    tag-number-pattern: '[/-](?<number>\d+)'
     tag: useBranchName
+    label: "{BranchName}.{CommitsSinceVersionSource}"
+    # tag-number-pattern: '[/-](?<number>\d+)'
