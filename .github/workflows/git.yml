@@ -6,8 +6,6 @@ on:
 jobs:
   runner:
     runs-on: ubuntu-latest
-    outputs:
-      git-tag: ${{ steps.build_version.outputs.git-tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -41,5 +39,12 @@ jobs:
           fi
 
           VERSION="${MAJOR}.${MINOR}.${PATCH}-${BRANCH}.${COMMITS}"
-          echo "git-tag=$VERSION" >> $GITHUB_OUTPUT
+
           echo "Built custom VERSION=$VERSION"
+          echo "GIT_TAG=$VERSION" > build.env
+
+      - name: Upload version artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: version
+          path: build.env

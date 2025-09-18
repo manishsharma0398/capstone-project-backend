@@ -1,4 +1,4 @@
-name: Main
+name: CI Pipeline
 
 on:
   push:
@@ -8,6 +8,9 @@ on:
       - "fix/*"
       - "hotfix/*"
 
+env:
+  GIT_TAG: ""
+
 jobs:
   git:
     uses: ./.github/workflows/git.yml
@@ -16,21 +19,6 @@ jobs:
     needs: git
     uses: ./.github/workflows/build.yml
 
-  debug:
-    needs: [git, build]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Show all needs context
-        run: echo '${{ toJSON(needs) }}'
-
-      - name: Show only git outputs
-        run: echo '${{ toJSON(needs.git.outputs) }}'
-
-      - name: Show git-tag specifically
-        run: echo "git-tag=${{ needs.git.outputs.git-tag }}"
-
   release:
     needs: [git, build]
     uses: ./.github/workflows/release.yml
-    with:
-      git-tag: ${{ needs.git.outputs.git-tag }}

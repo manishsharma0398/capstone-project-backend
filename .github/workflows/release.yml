@@ -1,19 +1,28 @@
 name: Release
 
 on:
-  workflow_call:
-    inputs:
-      git-tag:
-        required: true
-        type: string
+  workflow_call: {}
 
 jobs:
   runner:
     runs-on: ubuntu-latest
     steps:
+      - name: Download version artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: version
+          path: .
+
+      - name: Load GIT_TAG from artifact
+        run: |
+          cat build.env
+          export $(cat build.env | xargs)
+          echo "Using GIT_TAG=$GIT_TAG"
+        shell: bash
+
       - name: Create git tag
         env:
-          VERSION: ${{ inputs.git-tag }}
+          VERSION: ${{ env.GIT_TAG }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         if: github.ref == 'refs/heads/master'
         run: |
@@ -29,7 +38,7 @@ jobs:
 
       - name: Create GitHub Release
         env:
-          VERSION: ${{ inputs.git-tag }}
+          VERSION: ${{ env.GIT_TAG }}
         if: github.ref == 'refs/heads/master'
         uses: softprops/action-gh-release@v1
         with:
