@@ -16,12 +16,21 @@ jobs:
     needs: git
     uses: ./.github/workflows/build.yml
 
+  debug:
+    needs: [git, build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Show all needs context
+        run: echo '${{ toJSON(needs) }}'
+
+      - name: Show only git outputs
+        run: echo '${{ toJSON(needs.git.outputs) }}'
+
+      - name: Show git-tag specifically
+        run: echo "git-tag=${{ needs.git.outputs.git-tag }}"
+
   release:
-    # runs-on: ubuntu-latest
     needs: [git, build]
     uses: ./.github/workflows/release.yml
     with:
-      git-tag: ${{ steps.build_version.outputs.git-tag }}
-    # steps:
-    #   - name: Show all needs
-    #     run: echo '${{ toJSON(needs) }}'
+      git-tag: ${{ needs.git.outputs.git-tag }}
