@@ -22,8 +22,8 @@ jobs:
         run: |
           cat build.env
           export $(cat build.env | xargs)
-          echo "Using GIT_TAG=$GIT_TAG"
-          echo "GIT_TAG=$GIT_TAG" >> $GITHUB_ENV
+          echo "Using SEMVER=$SEMVER"
+          echo "GIT_TAG=$SEMVER" >> $GITHUB_ENV
         shell: bash
 
       - name: Create git tag
