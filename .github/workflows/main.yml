@@ -8,6 +8,9 @@ on:
       - "fix/*"
       - "hotfix/*"
 
+permissions:
+  contents: write
+
 env:
   GIT_TAG: ""
 
