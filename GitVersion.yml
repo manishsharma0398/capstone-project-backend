@@ -1,9 +1,9 @@
 mode: ContinuousDeployment
 increment: Patch
 
-# major-version-bump-message: '\+semver:\s?(breaking|major|release)'
-# minor-version-bump-message: '\+semver:\s?(feat|feature|minor)'
-# patch-version-bump-message: '\+semver:\s?(fix|patch)'
+major-version-bump-message: '\+semver:\s?(breaking|major|release)'
+minor-version-bump-message: '\+semver:\s?(feat|feature|minor)'
+patch-version-bump-message: '\+semver:\s?(fix|patch)'
 
 commit-message-incrementing: Enabled
 
@@ -17,13 +17,11 @@ branches:
   feature:
     regex: ^feat(s|ure)?[/-]
     increment: Minor
-    tag: useBranchName
     prevent-increment-of-merged-branch-version: false
 
   hotfix:
     regex: ^(fix|hotfix)[/-]
     increment: Patch
-    tag: useBranchName
     prevent-increment-of-merged-branch-version: false
 
   release:
@@ -35,4 +33,4 @@ branches:
     regex: ^(pull|pull\-requests|pr)[/-]
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
-    # tag-number-pattern: '[/-](?<number>\d+)'
+    tag-number-pattern: '[/-](?<number>\d+)'
