@@ -5,7 +5,6 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "commit": "cz",
     "prepare": "husky",
     "clean": "rm -rf ./dist",
     "clean:all": "npm run clean && rm -rf node_modules",
@@ -32,6 +31,9 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.6",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
@@ -81,5 +83,10 @@
   "engines": {
     "node": ">=22.17.1"
   },
-  "packageManager": "pnpm@10.16.0"
+  "packageManager": "pnpm@10.16.0",
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
+  }
 }

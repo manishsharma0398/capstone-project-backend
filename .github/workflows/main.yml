@@ -1,0 +1,24 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - master
+      - "feat/*"
+      - "fix/*"
+      - "hotfix/*"
+
+env:
+  GIT_TAG: ""
+
+jobs:
+  git:
+    uses: ./.github/workflows/git.yml
+
+  build:
+    needs: git
+    uses: ./.github/workflows/build.yml
+
+  release:
+    needs: [git, build]
+    uses: ./.github/workflows/release.yml
