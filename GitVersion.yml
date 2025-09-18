@@ -21,7 +21,6 @@ branches:
     increment: Minor
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
-    # label: "{BranchName}.{CommitsSinceVersionSource}"
 
   hotfix:
     mode: ContinuousDelivery
@@ -29,7 +28,6 @@ branches:
     increment: Patch
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
-    # label: "{BranchName}.{CommitsSinceVersionSource}"
 
   release:
     mode: ContinuousDelivery
@@ -37,7 +35,6 @@ branches:
     increment: None
     prevent-increment-of-merged-branch-version: true
     tag: ""
-    # label: "" # don’t append anything
 
   pull-request:
     mode: ContinuousDelivery
@@ -45,5 +42,3 @@ branches:
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
-    # label: "{BranchName}.{CommitsSinceVersionSource}"
-    # tag-number-pattern: '[/-](?<number>\d+)'
