@@ -17,7 +17,7 @@ branches:
 
   feature:
     mode: ContinuousDelivery
-    regex: ^feat(s|ure)?[/-]
+    regex: ^(feat|feature)[/-]
     increment: Minor
     prevent-increment-of-merged-branch-version: false
 
