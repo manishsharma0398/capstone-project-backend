@@ -47,4 +47,4 @@ branches:
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
     label: "{BranchName}.{CommitsSinceVersionSource}"
-    # tag-number-pattern: '[/-](?<number>\d+)'
+    tag-number-pattern: '[/-](?<number>\d+)'
