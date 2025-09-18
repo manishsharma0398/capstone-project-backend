@@ -24,6 +24,7 @@ branches:
   hotfix:
     mode: ContinuousDelivery
     regex: ^(fix|hotfix)[/-]
+    tag: useBranchName
     increment: Patch
     prevent-increment-of-merged-branch-version: false
 
@@ -39,3 +40,4 @@ branches:
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag-number-pattern: '[/-](?<number>\d+)'
+    tag: useBranchName
