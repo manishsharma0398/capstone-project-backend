@@ -1,4 +1,4 @@
-mode: ContinuousDelivery
+mode: ContinuousDeployment
 increment: Patch
 
 major-version-bump-message: '\+semver:\s?(breaking|major|release)'
@@ -9,31 +9,29 @@ commit-message-incrementing: Enabled
 
 branches:
   master:
-    mode: ContinuousDelivery
     regex: ^master$
     increment: Patch
     prevent-increment-of-merged-branch-version: true
+    is-main-branch: true
 
   feature:
-    mode: ContinuousDelivery
-    regex: ^(feat|feature)[/-]
+    regex: ^feat(s|ure)?[/-]
     increment: Minor
+    label: useBranchName
     prevent-increment-of-merged-branch-version: false
 
   hotfix:
-    mode: ContinuousDelivery
     regex: ^(fix|hotfix)[/-]
     increment: Patch
+    label: useBranchName
     prevent-increment-of-merged-branch-version: false
 
   release:
-    mode: ContinuousDelivery
     regex: ^releases?[/-]
     increment: None
     prevent-increment-of-merged-branch-version: true
 
   pull-request:
-    mode: ContinuousDelivery
     regex: ^(pull|pull\-requests|pr)[/-]
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
