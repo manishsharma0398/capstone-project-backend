@@ -12,14 +12,14 @@ class AuthRoutes {
   @Route(
     "get",
     "/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
+    passport.authenticate("google", { scope: ["profile", "email"] }),
   )
   getGoogleLoginScreen() {}
 
   @Route(
     "get",
     "/google/callback",
-    passport.authenticate("google", { session: false })
+    passport.authenticate("google", { session: false }),
   )
   getGoogleCallback(req: Request, res: Response) {
     return AuthController.googleCallback(req, res);
@@ -40,6 +40,10 @@ class AuthRoutes {
   @Route("post", "/logout")
   handleLogout(req: Request, res: Response) {
     return AuthController.logOut(req, res);
+  }
+  @Route("post", "/forgot-password")
+  handleForgotPasswordToken(req: Request, res: Response) {
+    return AuthController.generateForgotPasswordToken(req, res);
   }
 }
 

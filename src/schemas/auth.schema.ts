@@ -17,3 +17,16 @@ export const createUserFromEmailSchema: SchemaObject = {
     tags: ["Auth"],
   },
 };
+
+export const resetPasswordToken: SchemaObject = {
+  schema: {
+    body: z.object({
+      email: z.email(),
+    }),
+  },
+  openapi: {
+    summary: "Generate reset password token",
+    description: "Generate reset password token for a user with email",
+    tags: ["Auth"],
+  },
+};
