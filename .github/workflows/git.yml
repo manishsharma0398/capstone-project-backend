@@ -28,17 +28,33 @@ jobs:
       - name: Save git tags to artifact
         id: gittag
         run: |
-          echo "🔎 Dumping all env vars..."
-          printenv | sort
+          GIT_EVENT="${{ github.event_name }}"
           BRANCH="${{ env.GitVersion_BranchName }}"
-          if [ "$BRANCH" = "master" ]; then
+
+          if [ "$GIT_EVENT" = "pull_request" ]; then
+
+            echo "Detected PR build"
+
+            CLEAN_BRANCH="${{ github.head_ref }}"
+            CLEAN_BRANCH=$(echo "$CLEAN_BRANCH" | sed 's#[^a-zA-Z0-9._-]#-#g')
+            SEMVER="${{ env.GitVersion_Major }}.${{ env.GitVersion_Minor }}.${{ env.GitVersion_Patch }}-${CLEAN_BRANCH}.${{ env.GitVersion_CommitsSinceVersionSource }}"
+
+          elif [ "$BRANCH" = "master" ]; then
+
+            echo "Master branch detected"
+
             SEMVER="${{ env.GitVersion_SemVer }}"
+
           else  
+
+            echo "Feature/Hotfix branch detected"
+
             FULL_SEMVER="${{ env.GitVersion_FullSemVer }}"
             COMMIT_NUMBER=${{ env.GitVersion_CommitsSinceVersionSource }}
 
             # Replace ".<number>+<commits>" with ".<commits>"
             SEMVER=$(echo "$FULL_SEMVER" | sed -E "s/\.[0-9]+\+([0-9]+)/.\1/")
+
           fi
 
           echo "SEMVER=$SEMVER" >> build.env
