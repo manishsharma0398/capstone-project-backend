@@ -29,17 +29,9 @@ branches:
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
 
-  release:
-    mode: ContinuousDelivery
-    regex: ^releases?[/-]
-    increment: None
-    prevent-increment-of-merged-branch-version: true
-    tag: ""
-
   pull-request:
     mode: ContinuousDelivery
     regex: ^(pull|pull\-requests|pr)[/-]
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
-    source-branches: ["*"]
