@@ -3,23 +3,17 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - master
-      - "feat/*"
-      - "fix/*"
-      - "hotfix/*"
-
+      - "**"
   pull_request:
     branches:
-      - master
+      - "**"
 
 permissions:
   contents: write
 
-env:
-  GIT_TAG: ""
-
 jobs:
   git:
+    if: github.event_name != 'pull_request' || (github.event.pull_request.head.repo.full_name != github.event.pull_request.base.repo.full_name)
     uses: ./.github/workflows/git.yml
 
   build:
