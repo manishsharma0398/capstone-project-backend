@@ -94,6 +94,8 @@ class AuthController {
       code: CustomStatusCodes.USER_LOGGED_OUT,
     });
   }
+
+  async generateForgotPasswordToken(req: Request, res: Response) {}
 }
 
 export default new AuthController();
