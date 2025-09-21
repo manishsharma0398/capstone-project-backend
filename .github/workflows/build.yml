@@ -6,6 +6,8 @@ on:
 jobs:
   runner:
     runs-on: ubuntu-latest
+    env:
+      HUSKY: 0
     steps:
       - name: Checkout
         uses: actions/checkout@v4
