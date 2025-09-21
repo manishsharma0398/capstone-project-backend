@@ -11,6 +11,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ github.head_ref || github.ref }}
 
       - name: Setup GitVersion
         uses: GitTools/actions/gitversion/setup@v3
@@ -27,6 +28,8 @@ jobs:
       - name: Save git tags to artifact
         id: gittag
         run: |
+          echo "🔎 Dumping all env vars..."
+          printenv | sort
           BRANCH="${{ env.GitVersion_BranchName }}"
           if [ "$BRANCH" = "master" ]; then
             SEMVER="${{ env.GitVersion_SemVer }}"
