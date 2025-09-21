@@ -42,4 +42,3 @@ branches:
     increment: Inherit
     prevent-increment-of-merged-branch-version: false
     tag: useBranchName
-    source-branches: ["*"]
