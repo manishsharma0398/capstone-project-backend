@@ -20,9 +20,7 @@ jobs:
 
       - name: Load GIT_TAG from artifact
         run: |
-          cat build.env
           export $(cat build.env | xargs)
-          echo "Using SEMVER=$SEMVER"
           echo "GIT_TAG=$SEMVER" >> $GITHUB_ENV
         shell: bash
 
