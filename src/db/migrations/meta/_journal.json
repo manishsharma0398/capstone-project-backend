@@ -8,6 +8,13 @@
       "when": 1756837451790,
       "tag": "0000_classy_angel",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1758567472501,
+      "tag": "0001_optimal_wendigo",
+      "breakpoints": true
     }
   ]
 }

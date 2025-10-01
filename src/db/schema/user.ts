@@ -21,36 +21,39 @@ export const users = pg.pgTable(
     role: rolesEnum("role").default("volunteer").notNull(),
     provider: providersEnum("provider").default("local").notNull(),
     passwordHash: pg.text("password_hash"),
-    createdAt: pg.timestamp("created_at").defaultNow().notNull(),
+    createdAt: pg
+      .timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
     updatedAt: pg
-      .timestamp("updated_at")
+      .timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .notNull()
       .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
     isEmailVerified: pg.boolean("is_email_verified").default(false),
-    emailVerifiedAt: pg.timestamp("email_verified_at"),
+    emailVerifiedAt: pg.timestamp("email_verified_at", { withTimezone: true }),
     isPhoneVerified: pg.boolean("is_phone_verified").default(false),
-    phoneVerifiedAt: pg.timestamp("phone_verified_at"),
+    phoneVerifiedAt: pg.timestamp("phone_verified_at", { withTimezone: true }),
   },
   () => [
     pg.check(
       "email_required_if_not_phone",
-      sql`provider = 'phone' OR email IS NOT NULL`
+      sql`provider = 'phone' OR email IS NOT NULL`,
     ),
     pg.check(
       "name_required_if_not_phone",
-      sql`provider = 'phone' OR (first_name IS NOT NULL AND last_name IS NOT NULL)`
+      sql`provider = 'phone' OR (first_name IS NOT NULL AND last_name IS NOT NULL)`,
     ),
     pg.check(
       "password_provider_check",
-      sql`(provider IN ('google', 'phone') AND password_hash IS NULL) OR (provider = 'local' AND password_hash IS NOT NULL)`
+      sql`(provider IN ('google', 'phone') AND password_hash IS NULL) OR (provider = 'local' AND password_hash IS NOT NULL)`,
     ),
-  ]
+  ],
 );
 
 export const allUserRoles = rolesEnum.enumValues;
 export const registerableUserRoles = allUserRoles.filter(
-  (role) => role !== "admin"
+  (role) => role !== "admin",
 );
 
 export type ProviderType = (typeof providersEnum.enumValues)[number];
