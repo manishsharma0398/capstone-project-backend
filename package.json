@@ -5,7 +5,7 @@
   "main": "index.ts",
   "type": "module",
   "scripts": {
-    "prepare": "husky",
+    "prepare": "node .husky/install.mjs",
     "clean": "rm -rf ./dist",
     "clean:all": "npm run clean && rm -rf node_modules",
     "build": "npm run clean && tsc -p . && tsc-alias",

@@ -19,14 +19,14 @@ export const verifications = pg.pgTable(
     token: pg.varchar("token", { length: 256 }).notNull(),
     isUsed: pg.boolean("is_used").default(false).notNull(),
 
-    usedAt: pg.timestamp("used_at"),
+    usedAt: pg.timestamp("used_at", { withTimezone: true }),
     expiresAt: pg
-      .timestamp("expires_at")
+      .timestamp("expires_at", { withTimezone: true })
       .notNull()
       .default(sql`CURRENT_TIMESTAMP + INTERVAL '15 minutes'`),
-    createdAt: pg.timestamp("created_at").defaultNow(),
+    createdAt: pg.timestamp("created_at", { withTimezone: true }).defaultNow(),
     updatedAt: pg
-      .timestamp("updated_at")
+      .timestamp("updated_at", { withTimezone: true })
       .defaultNow()
       .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
   },
@@ -37,6 +37,5 @@ export const verifications = pg.pgTable(
       foreignColumns: [users.id],
       name: "fk_verifications_user_id",
     }),
-    pg.check("expires_in_future", sql`expires_at > CURRENT_TIMESTAMP`),
-  ]
+  ],
 );

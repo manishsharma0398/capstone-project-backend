@@ -5,21 +5,25 @@ import { OpenApi, Route, Routes, Validate } from "@/decorators";
 
 import { AuthController } from "@/controllers";
 
-import { createUserFromEmailSchema } from "@/schemas";
+import {
+  setNewPassword,
+  resetPasswordToken,
+  createUserFromEmailSchema,
+} from "@/schemas";
 
 @Routes("/auth")
 class AuthRoutes {
   @Route(
     "get",
     "/google",
-    passport.authenticate("google", { scope: ["profile", "email"] })
+    passport.authenticate("google", { scope: ["profile", "email"] }),
   )
   getGoogleLoginScreen() {}
 
   @Route(
     "get",
     "/google/callback",
-    passport.authenticate("google", { session: false })
+    passport.authenticate("google", { session: false }),
   )
   getGoogleCallback(req: Request, res: Response) {
     return AuthController.googleCallback(req, res);
@@ -40,6 +44,20 @@ class AuthRoutes {
   @Route("post", "/logout")
   handleLogout(req: Request, res: Response) {
     return AuthController.logOut(req, res);
+  }
+
+  @Route("post", "/forgot-password")
+  @Validate(resetPasswordToken.schema)
+  @OpenApi(resetPasswordToken)
+  handleForgotPasswordToken(req: Request, res: Response) {
+    return AuthController.generateForgotPasswordToken(req, res);
+  }
+
+  @Route("post", "/reset-password")
+  @Validate(setNewPassword.schema)
+  @OpenApi(setNewPassword)
+  handleResetPassword(req: Request, res: Response) {
+    return AuthController.resetPassword(req, res);
   }
 }
 

@@ -1,15 +1,23 @@
+import crypto from "crypto";
 import argon2 from "argon2";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 import { StatusCodes } from "http-status-codes";
 
 // db
 import db from "@/db";
-import { users, type RoleType } from "@/db/schema";
+import { users, verifications, type RoleType } from "@/db/schema";
+
+// config
+import { logger } from "@/config";
 
 // utils
 import { AppError, CustomStatusCodes } from "@/utils";
 
 export class AuthService {
+  static async generatePasswordHash(rawPassword: string) {
+    return argon2.hash(rawPassword);
+  }
+
   static async handleGoogleUser(values: NormalizedGoogleUser) {
     const [user] = await db
       .insert(users)
@@ -104,7 +112,7 @@ export class AuthService {
       });
     }
 
-    const passwordHash = await argon2.hash(data.password);
+    const passwordHash = await this.generatePasswordHash(data.password);
 
     const [user] = await db
       .insert(users)
@@ -132,5 +140,98 @@ export class AuthService {
     }
 
     return user;
+  }
+
+  static async generateForgotPasswordToken(data: { email: string }) {
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, data.email!),
+      columns: { id: true },
+    });
+
+    if (!user) {
+      throw new AppError({
+        message: "User not found",
+        statusCode: StatusCodes.NOT_FOUND,
+        code: CustomStatusCodes.USER_DOES_NOT_EXIST,
+      });
+    }
+
+    const verificationRow = await db.query.verifications.findFirst({
+      where: eq(verifications.userId, user.id),
+      orderBy: [desc(verifications.createdAt)],
+    });
+
+    // create new otp token if existing otp is expired or no verification row
+    if (
+      !verificationRow ||
+      verificationRow.isUsed ||
+      verificationRow?.expiresAt < new Date(Date.now())
+    ) {
+      const token = crypto.randomBytes(64).toString("hex");
+
+      const otp = await db
+        .insert(verifications)
+        .values({ type: "password_reset", userId: user.id, token })
+        .returning()
+        .then((r) => r?.[0]);
+
+      if (!otp) {
+        throw new AppError({
+          message: "Failed to create password reset token",
+          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+          code: CustomStatusCodes.PASSWORD_RESET_TOKEN_FAILED_TO_CREATE,
+        });
+      }
+
+      // mail new otp
+      return otp;
+    }
+
+    logger.info(`resending password reset token`, { userId: user.id });
+
+    // mail old otp again
+    // resend the existing token
+    return verificationRow;
+  }
+
+  static async resetPassword(data: { password: string; token: string }) {
+    const currentTimeStamp = Date.now();
+
+    const verification = await db.query.verifications.findFirst({
+      where: (verificationTable, { eq, and, gte }) =>
+        and(
+          eq(verificationTable.token, data.token),
+          eq(verificationTable.isUsed, false),
+          gte(verificationTable.expiresAt, new Date(currentTimeStamp)),
+        ),
+      columns: { id: true, userId: true },
+    });
+
+    if (!verification) {
+      throw new AppError({
+        message: "Invalid or expired token",
+        statusCode: StatusCodes.BAD_REQUEST,
+        code: CustomStatusCodes.INVALID_TOKEN,
+      });
+    }
+
+    const newPasswordHash = await this.generatePasswordHash(data.password);
+
+    await db.transaction(async (tx) => {
+      await tx
+        .update(users)
+        .set({ passwordHash: newPasswordHash })
+        .where(eq(users.id, verification.userId));
+
+      await tx
+        .update(verifications)
+        .set({
+          isUsed: true,
+          // usedAt: new Date(currentTimeStamp)
+        })
+        .where(eq(verifications.id, verification.id));
+    });
+
+    return true;
   }
 }

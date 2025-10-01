@@ -94,6 +94,30 @@ class AuthController {
       code: CustomStatusCodes.USER_LOGGED_OUT,
     });
   }
+
+  async generateForgotPasswordToken(req: Request, res: Response) {
+    await AuthService.generateForgotPasswordToken(req.body);
+
+    return ApiResponse.success({
+      req,
+      res,
+      code: ReasonPhrases.OK,
+      statusCode: StatusCodes.OK,
+      message: "Reset Password Token sent to registered email",
+    });
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    await AuthService.resetPassword(req.body);
+
+    return ApiResponse.success({
+      req,
+      res,
+      code: ReasonPhrases.OK,
+      statusCode: StatusCodes.OK,
+      message: "Password reset successfully",
+    });
+  }
 }
 
 export default new AuthController();

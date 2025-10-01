@@ -17,3 +17,45 @@ export const createUserFromEmailSchema: SchemaObject = {
     tags: ["Auth"],
   },
 };
+
+export const resetPasswordToken: SchemaObject = {
+  schema: {
+    body: z.object({
+      email: z.email(),
+    }),
+  },
+  openapi: {
+    summary: "Generate reset password token",
+    description: "Generate reset password token for a user with email",
+    tags: ["Auth"],
+  },
+};
+
+export const setNewPassword: SchemaObject = {
+  schema: {
+    body: z
+      .object({
+        password: z.string().min(6),
+        confirmPassword: z.string().min(6),
+        token: z
+          .string()
+          .trim()
+          .toLowerCase()
+          .length(64 * 2),
+      })
+      .superRefine(({ password, confirmPassword }, ctx) => {
+        if (password !== confirmPassword) {
+          ctx.addIssue({
+            code: "custom",
+            message: "Passwords do not match",
+            path: ["confirmPassword"],
+          });
+        }
+      }),
+  },
+  openapi: {
+    summary: "set new password",
+    description: "Set new password for local provider",
+    tags: ["Auth"],
+  },
+};
