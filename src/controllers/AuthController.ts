@@ -10,6 +10,7 @@ import {
 } from "@/utils";
 import { Env } from "@/config";
 import { AuthService } from "@/services";
+import type { NormalizedGoogleUser } from "../@types/user";
 
 class AuthController {
   async googleCallback(req: Request, res: Response) {
@@ -44,9 +45,10 @@ class AuthController {
 
     const user = await AuthService.loginWithEmail(email, password);
 
-    AuthTokenManager.issueToken({
+    const token = AuthTokenManager.issueToken({
       payload: {
-        sub: user.id,
+        userId: user.id,
+        email: user.email,
         role: user.role,
         provider: user.provider,
       },
@@ -56,7 +58,7 @@ class AuthController {
     return ApiResponse.success({
       req,
       res,
-      data: user,
+      data: token,
       message: "Successfully logged in",
     });
   }

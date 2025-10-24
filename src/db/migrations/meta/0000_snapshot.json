@@ -1,5 +1,5 @@
 {
-  "id": "9177ac2b-63e8-42be-9cf1-d6623f40c1e3",
+  "id": "04443c48-1fc7-4ef2-a87e-f40735867266",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -16,13 +16,13 @@
         },
         "email": {
           "name": "email",
-          "type": "varchar",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
         "phone": {
           "name": "phone",
-          "type": "varchar",
+          "type": "varchar(10)",
           "primaryKey": false,
           "notNull": false
         },
@@ -40,7 +40,7 @@
         },
         "role": {
           "name": "role",
-          "type": "roles",
+          "type": "user_roles_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -48,7 +48,7 @@
         },
         "provider": {
           "name": "provider",
-          "type": "providers",
+          "type": "providers_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
@@ -59,20 +59,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
         },
         "is_email_verified": {
           "name": "is_email_verified",
@@ -99,6 +85,20 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
         }
       },
       "indexes": {},
@@ -155,7 +155,7 @@
         },
         "verification_type": {
           "name": "verification_type",
-          "type": "verificationType",
+          "type": "verifications_type_enum",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -190,14 +190,14 @@
           "name": "created_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": false,
+          "notNull": true,
           "default": "now()"
         }
       },
@@ -234,7 +234,15 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
+      "uniqueConstraints": {
+        "verifications_token_unique": {
+          "name": "verifications_token_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "token"
+          ]
+        }
+      },
       "policies": {},
       "checkConstraints": {
         "expires_in_future": {
@@ -243,11 +251,287 @@
         }
       },
       "isRLSEnabled": false
+    },
+    "public.listings": {
+      "name": "listings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "listings_status_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'draft'"
+        },
+        "listing_type": {
+          "name": "listing_type",
+          "type": "listings_type_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "organization_id": {
+          "name": "organization_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "location": {
+          "name": "location",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "extra_data": {
+          "name": "extra_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "idx_listings_organization_id": {
+          "name": "idx_listings_organization_id",
+          "columns": [
+            {
+              "expression": "organization_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_listings_status": {
+          "name": "idx_listings_status",
+          "columns": [
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_listings_type": {
+          "name": "idx_listings_type",
+          "columns": [
+            {
+              "expression": "listing_type",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "fk_listings_organization_id": {
+          "name": "fk_listings_organization_id",
+          "tableFrom": "listings",
+          "tableTo": "users",
+          "columnsFrom": [
+            "organization_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.applications": {
+      "name": "applications",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "listing_id": {
+          "name": "listing_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "volunteer_id": {
+          "name": "volunteer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "message": {
+          "name": "message",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "application_status": {
+          "name": "application_status",
+          "type": "applications_status_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        }
+      },
+      "indexes": {
+        "unique_application_per_volunteer": {
+          "name": "unique_application_per_volunteer",
+          "columns": [
+            {
+              "expression": "listing_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "volunteer_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_applications_listing_id": {
+          "name": "idx_applications_listing_id",
+          "columns": [
+            {
+              "expression": "listing_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "idx_applications_volunteer_id": {
+          "name": "idx_applications_volunteer_id",
+          "columns": [
+            {
+              "expression": "volunteer_id",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "fk_applications_listing_id": {
+          "name": "fk_applications_listing_id",
+          "tableFrom": "applications",
+          "tableTo": "listings",
+          "columnsFrom": [
+            "listing_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "fk_applications_volunteer_id": {
+          "name": "fk_applications_volunteer_id",
+          "tableFrom": "applications",
+          "tableTo": "users",
+          "columnsFrom": [
+            "volunteer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
     }
   },
   "enums": {
-    "public.providers": {
-      "name": "providers",
+    "public.providers_enum": {
+      "name": "providers_enum",
       "schema": "public",
       "values": [
         "google",
@@ -255,22 +539,52 @@
         "phone"
       ]
     },
-    "public.roles": {
-      "name": "roles",
+    "public.user_roles_enum": {
+      "name": "user_roles_enum",
       "schema": "public",
       "values": [
-        "ngo",
+        "organization",
         "volunteer",
         "admin"
       ]
     },
-    "public.verificationType": {
-      "name": "verificationType",
+    "public.verifications_type_enum": {
+      "name": "verifications_type_enum",
       "schema": "public",
       "values": [
         "mobile_number_verification",
         "email_verification",
         "password_reset"
+      ]
+    },
+    "public.listings_status_enum": {
+      "name": "listings_status_enum",
+      "schema": "public",
+      "values": [
+        "active",
+        "inactive",
+        "closed",
+        "draft"
+      ]
+    },
+    "public.listings_type_enum": {
+      "name": "listings_type_enum",
+      "schema": "public",
+      "values": [
+        "volunteer_opportunity",
+        "donation_request",
+        "event",
+        "job"
+      ]
+    },
+    "public.applications_status_enum": {
+      "name": "applications_status_enum",
+      "schema": "public",
+      "values": [
+        "pending",
+        "accepted",
+        "rejected",
+        "withdrawn"
       ]
     }
   },
