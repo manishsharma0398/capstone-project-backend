@@ -7,6 +7,7 @@ import {
 
 // config
 import { Env } from "@/config";
+import type { NormalizedGoogleUser } from "$/src/@types/user";
 
 const googleLoginStrategy = (passports: PassportStatic) => {
   passports.use(
@@ -20,7 +21,7 @@ const googleLoginStrategy = (passports: PassportStatic) => {
         _accessToken: string,
         _refreshToken: string,
         profile: Profile,
-        done: VerifyCallback
+        done: VerifyCallback,
       ) => {
         try {
           console.log(profile);
@@ -35,8 +36,8 @@ const googleLoginStrategy = (passports: PassportStatic) => {
         } catch (err) {
           done(err, undefined);
         }
-      }
-    )
+      },
+    ),
   );
 };
 

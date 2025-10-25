@@ -28,7 +28,7 @@ class AuthController {
 
     const token = AuthTokenManager.issueToken({
       payload: {
-        sub: user.id,
+        userId: user.id,
         role: user.role,
         provider: user.provider,
       },
@@ -48,7 +48,6 @@ class AuthController {
     const token = AuthTokenManager.issueToken({
       payload: {
         userId: user.id,
-        email: user.email,
         role: user.role,
         provider: user.provider,
       },

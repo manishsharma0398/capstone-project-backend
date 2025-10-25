@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 
 // db
 import db from "@/db";
-import { ListingType, ApplicationStatus, users } from "@/db/schema";
+import { ApplicationStatus, users, Providers, UserRole } from "@/db/schema";
 
 // utils
 import { AppError, CustomStatusCodes } from "@/utils";
@@ -52,10 +52,10 @@ export class AuthService {
       });
     }
 
-    if (user.provider !== ListingType.LOCAL) {
+    if (user.provider !== Providers.LOCAL) {
       throw new AppError({
         message:
-          user.provider === ListingType.GOOGLE
+          user.provider === Providers.GOOGLE
             ? "Please login with Google"
             : "Please login with Phone",
         code: CustomStatusCodes.INVALID_LOGIN_METHOD,
@@ -112,8 +112,8 @@ export class AuthService {
       .values({
         ...data,
         passwordHash,
-        provider: ListingType.LOCAL,
-        role: data?.role || ApplicationStatus.VOLUNTEER,
+        provider: Providers.LOCAL,
+        role: data?.role || UserRole.VOLUNTEER,
       })
       .returning({
         id: users.id,
