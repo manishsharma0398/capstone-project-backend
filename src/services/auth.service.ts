@@ -4,10 +4,11 @@ import { StatusCodes } from "http-status-codes";
 
 // db
 import db from "@/db";
-import { users, type RoleType } from "@/db/schema";
+import { ApplicationStatus, users, Providers, UserRole } from "@/db/schema";
 
 // utils
 import { AppError, CustomStatusCodes } from "@/utils";
+import type { NormalizedGoogleUser } from "../@types/user";
 
 export class AuthService {
   static async handleGoogleUser(values: NormalizedGoogleUser) {
@@ -51,10 +52,10 @@ export class AuthService {
       });
     }
 
-    if (user.provider !== "local") {
+    if (user.provider !== Providers.LOCAL) {
       throw new AppError({
         message:
-          user.provider === "google"
+          user.provider === Providers.GOOGLE
             ? "Please login with Google"
             : "Please login with Phone",
         code: CustomStatusCodes.INVALID_LOGIN_METHOD,
@@ -89,7 +90,7 @@ export class AuthService {
     password: string;
     firstName: string;
     lastName: string;
-    role?: RoleType;
+    role?: ApplicationStatus;
   }) {
     const userExists = await db.query.users.findFirst({
       where: eq(users.email, data.email!),
@@ -111,8 +112,8 @@ export class AuthService {
       .values({
         ...data,
         passwordHash,
-        provider: "local",
-        role: data?.role || "volunteer",
+        provider: Providers.LOCAL,
+        role: data?.role || UserRole.VOLUNTEER,
       })
       .returning({
         id: users.id,

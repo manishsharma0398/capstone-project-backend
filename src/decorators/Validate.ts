@@ -1,8 +1,6 @@
 import { ZodError } from "zod";
-import type { ParsedQs } from "qs";
 import { ReasonPhrases, StatusCodes } from "http-status-codes";
 import type { Request, Response, NextFunction } from "express";
-import type { ParamsDictionary } from "express-serve-static-core";
 
 // utils
 import { AppError, type SchemaPart } from "@/utils";
@@ -11,28 +9,30 @@ export function Validate(schema: SchemaPart) {
   return function (
     _target: any,
     _propertyKey: string,
-    descriptor: PropertyDescriptor
+    descriptor: PropertyDescriptor,
   ) {
     const originalMethod = descriptor.value;
 
     descriptor.value = async function (
       req: Request,
       res: Response,
-      next: NextFunction
+      next: NextFunction,
     ) {
       try {
         if (schema.body) {
           req.body = await schema.body.strict().parseAsync(req.body);
         }
         if (schema.query) {
-          req.query = (await schema.query
-            .strict()
-            .parseAsync(req.query)) as ParsedQs;
+          Object.assign(
+            req.query,
+            await schema.query.strict().parseAsync(req.query),
+          );
         }
         if (schema.params) {
-          req.params = (await schema.params
-            .strict()
-            .parseAsync(req.params)) as ParamsDictionary;
+          Object.assign(
+            req.query,
+            await schema.params.strict().parseAsync(req.query),
+          );
         }
         return originalMethod.call(this, req, res, next);
       } catch (err) {
