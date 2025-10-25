@@ -67,7 +67,7 @@ class AuthController {
 
     AuthTokenManager.issueToken({
       payload: {
-        sub: user.id,
+        userId: user.id,
         role: user.role,
         provider: user.provider,
       },

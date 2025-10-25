@@ -60,7 +60,7 @@ export const users = pg.pgTable(
       .timestamp(FieldNames.UPDATED_AT)
       .defaultNow()
       .notNull()
-      .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+      .$onUpdate(() => new Date()),
   },
   () => [
     pg.check(

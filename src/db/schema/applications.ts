@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import * as pg from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { users } from "./user";
@@ -46,7 +45,7 @@ export const applications = pg.pgTable(
       .timestamp(FieldNames.UPDATED_AT)
       .defaultNow()
       .notNull()
-      .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     pg.foreignKey({

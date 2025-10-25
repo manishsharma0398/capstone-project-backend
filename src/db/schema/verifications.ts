@@ -48,7 +48,7 @@ export const verifications = pg.pgTable(
       .timestamp(FieldNames.UPDATED_AT)
       .defaultNow()
       .notNull()
-      .$onUpdate(() => sql`CURRENT_TIMESTAMP`),
+      .$onUpdate(() => new Date()),
   },
   (table) => [
     pg.index("verification_userId_idx").on(table.userId),
