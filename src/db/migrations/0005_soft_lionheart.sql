@@ -1,0 +1,1 @@
+ALTER TABLE "applications" ADD COLUMN "organization_message" varchar(256) DEFAULT '';

@@ -1,0 +1,1 @@
+ALTER TABLE "applications" RENAME COLUMN "application_status" TO "status";

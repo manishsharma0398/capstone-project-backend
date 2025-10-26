@@ -19,7 +19,12 @@ import { corsOptions, initializePassport, passport } from "@/config";
 import { defineRoutes } from "@/modules";
 
 // routes
-import { MainRoutes, AuthRoutes, ListingRoutes } from "@/routes";
+import {
+  MainRoutes,
+  AuthRoutes,
+  ListingRoutes,
+  ApplicationRoutes,
+} from "@/routes";
 
 // docs
 import { setupSwagger } from "@/docs";
@@ -42,7 +47,7 @@ initializePassport();
 app.use(loggingMiddleware);
 
 // Routes
-defineRoutes([MainRoutes, AuthRoutes, ListingRoutes], app);
+defineRoutes([MainRoutes, AuthRoutes, ListingRoutes, ApplicationRoutes], app);
 
 // Setup Swagger
 setupSwagger(app);

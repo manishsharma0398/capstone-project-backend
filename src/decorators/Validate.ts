@@ -30,8 +30,8 @@ export function Validate(schema: SchemaPart) {
         }
         if (schema.params) {
           Object.assign(
-            req.query,
-            await schema.params.strict().parseAsync(req.query),
+            req.params,
+            await schema.params.strict().parseAsync(req.params),
           );
         }
         return originalMethod.call(this, req, res, next);

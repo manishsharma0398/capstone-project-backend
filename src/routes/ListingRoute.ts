@@ -14,7 +14,7 @@ import {
 } from "../schemas";
 
 @Routes("/listings")
-class MainRoutes {
+class ListingRoutes {
   @Route("get", "/", authenticateJWT, authorizeRoles(UserRole.ADMIN))
   @Validate(getAllListing.schema)
   @OpenApi(getAllListing)
@@ -73,4 +73,4 @@ class MainRoutes {
   }
 }
 
-export default MainRoutes;
+export default ListingRoutes;
