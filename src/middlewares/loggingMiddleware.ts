@@ -22,17 +22,17 @@ const sanitizeBody = (body: Record<string, any>) => {
 export const loggingMiddleware = (
   req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   logger.info("Incoming Request", {
-    ip: req.ip,
-    method: req.method,
-    url: req.originalUrl,
-    userAgent: req.get("user-agent"),
-    body: Object.keys(req.body || {}).length
-      ? sanitizeBody(req.body)
+    ip: req?.ip,
+    method: req?.method,
+    url: req?.originalUrl,
+    userAgent: req?.get("user-agent"),
+    body: Object.keys(req?.body || {}).length
+      ? sanitizeBody(req?.body)
       : undefined,
-    query: Object.keys(req.query).length ? req.query : undefined,
+    query: Object.keys(req?.query)?.length ? req?.query : undefined,
     context: "HttpRequest",
     event: "incoming",
   });

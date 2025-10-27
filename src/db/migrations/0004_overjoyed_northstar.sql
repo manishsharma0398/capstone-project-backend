@@ -1,0 +1,1 @@
+ALTER TABLE "applications" RENAME COLUMN "message" TO "volunteer_message";

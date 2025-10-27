@@ -8,6 +8,41 @@
       "when": 1761407485189,
       "tag": "0000_shallow_purifiers",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1761422076183,
+      "tag": "0001_spotty_korg",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1761422982763,
+      "tag": "0002_normal_namora",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1761423318342,
+      "tag": "0003_absurd_the_anarchist",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1761480979488,
+      "tag": "0004_overjoyed_northstar",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1761481001694,
+      "tag": "0005_soft_lionheart",
+      "breakpoints": true
     }
   ]
 }

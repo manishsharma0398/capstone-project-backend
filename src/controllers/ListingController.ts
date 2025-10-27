@@ -9,8 +9,8 @@ import { ApiResponse, CustomStatusCodes } from "@/utils";
 class ListingController {
   async getAllListing(req: Request, res: Response) {
     const listings = await ListingService.getAllListing({
-      offset: Number(req.query.offset ?? 0),
-      limit: Number(req.query.limit ?? 48),
+      offset: Number(req?.query?.offset ?? 0),
+      limit: Number(req?.query?.limit ?? 48),
     });
 
     return ApiResponse.success({
@@ -25,8 +25,8 @@ class ListingController {
 
   async getOrganizationListing(req: Request, res: Response) {
     const listings = await ListingService.getOrganizationListing({
-      offset: Number(req.query.offset ?? 0),
-      limit: Number(req.query.limit ?? 48),
+      offset: Number(req?.query?.offset ?? 0),
+      limit: Number(req?.query?.limit ?? 48),
       organizationId: Number(req?.params?.organizationId!),
     });
 

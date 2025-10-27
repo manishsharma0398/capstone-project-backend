@@ -1,5 +1,5 @@
 import * as pg from "drizzle-orm/pg-core";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createUpdateSchema } from "drizzle-zod";
 import { users } from "./user";
 import { listings } from "./listings";
 
@@ -7,7 +7,8 @@ enum FieldNames {
   ID = "id",
   LISTING_ID = "listing_id",
   VOLUNTEER_ID = "volunteer_id",
-  MESSAGE = "message",
+  VOLUNTEER_MESSAGE = "volunteer_message",
+  ORGANIZATION_MESSAGE = "organization_message",
   APPLICATION_STATUS = "application_status",
   CREATED_AT = "created_at",
   UPDATED_AT = "updated_at",
@@ -36,8 +37,13 @@ export const applications = pg.pgTable(
     id: pg.serial(FieldNames.ID).primaryKey().notNull(),
     listingId: pg.integer(FieldNames.LISTING_ID).notNull(),
     volunteerId: pg.integer(FieldNames.VOLUNTEER_ID).notNull(),
-    message: pg.varchar(FieldNames.MESSAGE, { length: 256 }),
-    status: applicationStatusEnum(FieldNames.APPLICATION_STATUS)
+    volunteerMessage: pg
+      .varchar(FieldNames.VOLUNTEER_MESSAGE, { length: 256 })
+      .default(""),
+    organizationMessage: pg
+      .varchar(FieldNames.ORGANIZATION_MESSAGE, { length: 256 })
+      .default(""),
+    applicationStatus: applicationStatusEnum(FieldNames.APPLICATION_STATUS)
       .default(ApplicationStatus.PENDING)
       .notNull(),
     createdAt: pg.timestamp(FieldNames.CREATED_AT).defaultNow().notNull(),
@@ -66,4 +72,16 @@ export const applications = pg.pgTable(
   ],
 );
 
-export const newApplicationBodySchema = createInsertSchema(applications);
+export const newApplicationBodySchema = createInsertSchema(applications).omit({
+  id: true,
+  volunteerId: true,
+  createdAt: true,
+  updatedAt: true,
+  applicationStatus: true,
+  organizationMessage: true,
+});
+
+export const reviewApplicationSchema = createUpdateSchema(applications).pick({
+  organizationMessage: true,
+  applicationStatus: true,
+});
