@@ -39,14 +39,10 @@ class ApplicationController {
   }
 
   async listApplicationsByUser(req: Request, res: Response) {
-    const queriedUserId = Number(req?.params?.userId);
-
     const applications = await ApplicationService.listApplicationsByUser({
       offset: Number(req?.query?.offset || 0),
       limit: Number(req?.query?.limit || 48),
-      queriedUserId,
-      loggedInUserId: req.user?.userId!,
-      role: req.user?.role!,
+      userId: req.user?.userId!,
     });
 
     return ApiResponse.success({
@@ -54,7 +50,25 @@ class ApplicationController {
       res,
       data: applications,
       statusCode: StatusCodes.OK,
-      message: `Fetched applications submitted by user #${queriedUserId}`,
+      message: `Fetched applications submitted by user #${req.user?.userId}`,
+      code: ReasonPhrases.OK,
+    });
+  }
+
+  async listApplicationsByOrganization(req: Request, res: Response) {
+    const applications =
+      await ApplicationService.listApplicationsByOrganization({
+        offset: Number(req?.query?.offset || 0),
+        limit: Number(req?.query?.limit || 48),
+        userId: req.user?.userId!,
+      });
+
+    return ApiResponse.success({
+      req,
+      res,
+      data: applications,
+      statusCode: StatusCodes.OK,
+      message: `Fetched applied applications by organization #${req.user?.userId}`,
       code: ReasonPhrases.OK,
     });
   }

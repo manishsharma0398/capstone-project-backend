@@ -27,6 +27,11 @@ const EnvSchema = z.object({
     .default("http://localhost:8000/auth/google/callback"),
 
   CLIENT_BASE_URL: z.url().default("http://localhost:3000"),
+
+  AWS_REGION: z.string().trim().toLowerCase().default("ap-south-2"),
+  AWS_ACCESS_KEY_ID: z.string().trim(),
+  AWS_SECRET_ACCESS_KEY: z.string().trim(),
+  S3_BUCKET: z.string().trim(),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
@@ -44,7 +49,7 @@ try {
 
     // still throw to stop the app from booting
     throw new Error(
-      "Invalid environment configuration. Check logs for details."
+      "Invalid environment configuration. Check logs for details.",
     );
   } else {
     logger.error("Unexpected error while parsing env", { error });

@@ -3,134 +3,55 @@ import { ReasonPhrases, StatusCodes } from "http-status-codes";
 
 // db
 import db from "@/db";
-import {
-  listings,
-  listingSkills,
-  ListingStatus,
-  listingStatus,
-  listingStatusEnum,
-  media,
-  MediaScope,
-  MediaType,
-  UserRole,
-} from "@/db/schema";
+import { listings, skills, UserRole, userSkills } from "@/db/schema";
 
 // utils
 import { AppError, CustomStatusCodes } from "@/utils";
 
-interface CreateListingData {
-  title: string;
-  description: string;
-  listingType: string;
-  listingStatus?: string;
-  location?: string;
-  organizationId: number;
-  city?: string;
-  state?: string;
-  country?: string;
-  skills?: number[];
-  media?: string[];
-  timeSlots?: {
-    day: string;
-    startTime: string;
-    endTime: string;
-  }[];
-}
+export class SkillService {
+  static async createNewSkill(data: { title: string; description: string }) {
+    const skill = await db
+      .insert(skills)
+      .values({ ...data })
+      .returning();
 
-export class ListingService {
-  static async createNewListing(data: CreateListingData) {
-    return await db.transaction(async (tx) => {
-      const [newListing] = await tx
-        .insert(listings)
-        .values({
-          title: data.title,
-          description: data.description,
-          listingType: data.listingType,
-          listingStatus: data.listingStatus, // ✅ correct column name
-          organizationId: data.organizationId, // ✅ actual org ID
-          location: `${data?.city || ""}, ${data.state || ""}, ${
-            data.country || ""
-          }`,
-          extraData: {
-            timeSlots: data.timeSlots ?? [],
-          },
-        })
-        .returning();
+    if (!skill) {
+      throw new AppError({
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        code: CustomStatusCodes.LISTING_FAILED_TO_CREATE,
+        message: "Failed to create skills",
+      });
+    }
 
-      if (!newListing) {
-        throw new AppError({
-          statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
-          code: CustomStatusCodes.LISTING_FAILED_TO_CREATE,
-          message: "Failed to create listing",
-        });
-      }
-
-      const listingId = newListing.id;
-
-      // 2️⃣ Insert listing skills
-      if (data.skills?.length) {
-        await tx.insert(listingSkills).values(
-          data.skills.map((skillId) => ({
-            listingId,
-            skillId,
-          })),
-        );
-      }
-
-      if (data.media && data?.media?.length > 0) {
-        await tx.insert(media).values(
-          data.media.map((url, idx) => ({
-            userId: data.organizationId, // or req.user.userId
-            entityId: listingId,
-            mediaUrl: url,
-            mediaType: MediaType.IMAGE, // TODO: detect via extension
-            mediaScope: MediaScope.LISTING,
-            isPrimary: idx === 0, // mark first as primary
-          })),
-        );
-      }
-
-      return {
-        ...newListing,
-        skills: data.skills ?? [],
-        media: data.media ?? [],
-      };
-    });
+    return skill;
   }
 
-  // public route
-  static async getAllListing(data: { offset: number; limit: number }) {
+  static async getAllSkills(data: { offset: number; limit: number }) {
     const query = sql`
       WITH data AS (
-        SELECT * FROM ${listings}
-        WHERE status = ${ListingStatus.ACTIVE}
-        ORDER BY id DESC
-        LIMIT ${data.limit} 
-        OFFSET ${data.offset}
+        SELECT * FROM ${skills}
+        ORDER BY id ASC
+        LIMIT ${data.limit} OFFSET ${data.offset}
       )
       SELECT json_build_object(
         'items', json_agg(data.*),
-        'total', (
-          SELECT COUNT(*)::int 
-          FROM ${listings} 
-          WHERE status = ${ListingStatus.ACTIVE}
-        )
+        'total', (SELECT COUNT(*)::int FROM ${skills})
       )::json AS result
       FROM data;
       `;
 
-    const allListings = await db.execute(query);
+    const allSkills = await db.execute(query);
 
-    if (!allListings) {
+    if (!allSkills) {
       throw new AppError({
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         code: ReasonPhrases.INTERNAL_SERVER_ERROR,
-        message: "Error getting all listings",
+        message: "Error getting all skills",
       });
     }
 
     // Parse JSON string manually
-    const parsed = allListings.rows?.[0]?.result ?? {
+    const parsed = allSkills.rows?.[0]?.result ?? {
       items: [],
       total: 0,
     };
@@ -138,34 +59,34 @@ export class ListingService {
     return parsed;
   }
 
-  static async getOrganizationListing(data: {
+  static async getUserSkills(data: {
     offset: number;
     limit: number;
-    organizationId: number;
+    userId: number;
   }) {
     const query = sql`
       WITH data AS (
         SELECT * 
-        FROM ${listings}
-        WHERE organization_id = ${data.organizationId}
-        ORDER BY created_at DESC
+        FROM ${userSkills}
+        WHERE user_id = ${data.userId}
+        ORDER BY id ASC
         LIMIT ${data.limit} 
         OFFSET ${data.offset}
       )
       SELECT json_build_object(
-        'items', COALESCE(json_agg(data.*), '[]'::json),
+        'items', json_agg(data.*),
         'total', (
           SELECT COUNT(*)::int 
-          FROM ${listings} 
-          WHERE organization_id = ${data.organizationId}
+          FROM ${userSkills} 
+          WHERE user_id = ${data.userId}
         )
       )::json AS result
       FROM data;
     `;
 
-    const organizationListing = await db.execute(query);
+    const userAllSkills = await db.execute(query);
 
-    if (!organizationListing) {
+    if (!userAllSkills) {
       throw new AppError({
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         code: ReasonPhrases.INTERNAL_SERVER_ERROR,
@@ -174,7 +95,7 @@ export class ListingService {
     }
 
     // Parse JSON string manually
-    const parsed = organizationListing.rows?.[0]?.result ?? {
+    const parsed = userAllSkills.rows?.[0]?.result ?? {
       items: [],
       total: 0,
     };
@@ -182,7 +103,42 @@ export class ListingService {
     return parsed;
   }
 
-  static async updateListing(data: {
+  static async searchASkill(data: { query: string }) {
+    try {
+      const pattern = `%${data.query}%`;
+
+      // safer: use Drizzle SQL template with parameter binding
+      const result = await db.execute(
+        sql`
+          SELECT id,title
+          FROM ${skills}
+          WHERE ${skills.title} ILIKE ${pattern}
+          ORDER BY ${skills.title} ASC
+          LIMIT 48;
+        `,
+      );
+
+      if (!result?.rows?.length) {
+        return {
+          items: [],
+          total: 0,
+        };
+      }
+
+      return {
+        items: result.rows,
+        total: result.rows.length,
+      };
+    } catch (error) {
+      throw new AppError({
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        code: ReasonPhrases.INTERNAL_SERVER_ERROR,
+        message: "Failed searching skills",
+      });
+    }
+  }
+
+  static async updateSkill(data: {
     listingId: number;
     role: UserRole;
     userId: number;
@@ -231,7 +187,7 @@ export class ListingService {
     return updatedListing;
   }
 
-  static async deleteListing(data: {
+  static async deleteSkill(data: {
     listingId: number;
     role: UserRole;
     userId: number;

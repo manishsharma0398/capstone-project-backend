@@ -7,6 +7,7 @@ import { UserRole } from "../db/schema";
 import {
   createNewListingSchema,
   deleteListing,
+  getAdminListing,
   getAllListing,
   getListing,
   getOrganizationListing,
@@ -15,13 +16,6 @@ import {
 
 @Routes("/listings")
 class ListingRoutes {
-  @Route("get", "/", authenticateJWT, authorizeRoles(UserRole.ADMIN))
-  @Validate(getAllListing.schema)
-  @OpenApi(getAllListing)
-  handleGetAllListings(req: Request, res: Response) {
-    return ListingController.getAllListing(req, res);
-  }
-
   @Route(
     "post",
     "/new",
@@ -34,11 +28,31 @@ class ListingRoutes {
     return ListingController.createNewListing(req, res);
   }
 
-  @Route("get", "/:organizationId")
+  // public
+  @Route("get", "/")
+  @Validate(getAllListing.schema)
+  @OpenApi(getAllListing)
+  handleGetAllListings(req: Request, res: Response) {
+    return ListingController.getAllListing(req, res);
+  }
+
+  @Route(
+    "get",
+    "/organization",
+    authenticateJWT,
+    authorizeRoles(UserRole.ORGANIZATION),
+  )
   @Validate(getOrganizationListing.schema)
   @OpenApi(getOrganizationListing)
   handleGetOrganizationListings(req: Request, res: Response) {
     return ListingController.getOrganizationListing(req, res);
+  }
+
+  @Route("get", "/admin", authenticateJWT, authorizeRoles(UserRole.ADMIN))
+  @Validate(getAdminListing.schema)
+  @OpenApi(getAdminListing)
+  handleGetAdminListings(req: Request, res: Response) {
+    return ListingController.getAllListing(req, res);
   }
 
   @Route("get", "/:listingId")

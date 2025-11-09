@@ -11,25 +11,28 @@ extendZodWithOpenApi(z);
 
 export const createNewListingSchema: SchemaObject = {
   schema: {
-    body: newListingBodySchema.extend({}),
+    body: newListingBodySchema.extend({
+      // Frontend extras (optional in request)
+      city: z.string().optional(),
+      state: z.string().optional(),
+      country: z.string().optional(),
+
+      skills: z.array(z.number()).optional(), // list of skill IDs
+      media: z.array(z.string()).optional(), // S3 URLs
+      timeSlots: z
+        .array(
+          z.object({
+            day: z.string(),
+            startTime: z.string(),
+            endTime: z.string(),
+          }),
+        )
+        .optional(),
+    }),
   },
   openapi: {
     summary: "Create new listing",
     description: "Creates new listing",
-    tags: ["Listings"],
-  },
-};
-
-export const getAllListing: SchemaObject = {
-  schema: {
-    query: z.object({
-      offset: z.coerce.number().default(0),
-      limit: z.coerce.number().default(48),
-    }),
-  },
-  openapi: {
-    summary: "getAllListing",
-    description: "getAllListing",
     tags: ["Listings"],
   },
 };
@@ -74,9 +77,22 @@ export const deleteListing: SchemaObject = {
   },
 };
 
+export const getAllListing: SchemaObject = {
+  schema: {
+    query: z.object({
+      offset: z.coerce.number().default(0),
+      limit: z.coerce.number().default(48),
+    }),
+  },
+  openapi: {
+    summary: "getAllListing",
+    description: "getAllListing",
+    tags: ["Listings"],
+  },
+};
+
 export const getOrganizationListing: SchemaObject = {
   schema: {
-    params: z.object({ organizationId: z.coerce.number().gt(0) }),
     query: z.object({
       offset: z.coerce.number().default(0),
       limit: z.coerce.number().default(48),
@@ -85,6 +101,20 @@ export const getOrganizationListing: SchemaObject = {
   openapi: {
     summary: "getOrganizationListing",
     description: "getOrganizationListing",
+    tags: ["Listings"],
+  },
+};
+
+export const getAdminListing: SchemaObject = {
+  schema: {
+    query: z.object({
+      offset: z.coerce.number().default(0),
+      limit: z.coerce.number().default(48),
+    }),
+  },
+  openapi: {
+    summary: "getAdminListing",
+    description: "getAdminListing",
     tags: ["Listings"],
   },
 };

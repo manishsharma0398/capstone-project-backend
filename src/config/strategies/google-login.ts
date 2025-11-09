@@ -24,7 +24,6 @@ const googleLoginStrategy = (passports: PassportStatic) => {
         done: VerifyCallback,
       ) => {
         try {
-          console.log(profile);
           const normalizedGoogleUser: NormalizedGoogleUser = {
             firstName: profile.name?.givenName!,
             lastName: profile.name?.familyName!,

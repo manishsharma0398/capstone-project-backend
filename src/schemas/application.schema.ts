@@ -41,9 +41,6 @@ export const getSingleApplicationSchemaObject: SchemaObject = {
 
 export const listApplicationsByUserSchemaObject: SchemaObject = {
   schema: {
-    params: z.object({
-      userId: z.coerce.number().describe("Unique ID of the volunteer/user"),
-    }),
     query: z.object({
       offset: z.coerce.number().default(0).describe("Pagination offset"),
       limit: z.coerce
@@ -55,7 +52,7 @@ export const listApplicationsByUserSchemaObject: SchemaObject = {
   openapi: {
     summary: "List all applications submitted by a specific user",
     description:
-      "Allows an admin to view all applications submitted by a specific volunteer, or a volunteer to view their own applications.",
+      "Allows a volunteer to view all their submitted or applied applications.",
     tags: ["Application"],
   },
 };

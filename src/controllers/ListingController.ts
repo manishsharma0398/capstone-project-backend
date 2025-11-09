@@ -27,7 +27,7 @@ class ListingController {
     const listings = await ListingService.getOrganizationListing({
       offset: Number(req?.query?.offset ?? 0),
       limit: Number(req?.query?.limit ?? 48),
-      organizationId: Number(req?.params?.organizationId!),
+      organizationId: Number(req?.user?.userId!),
     });
 
     return ApiResponse.success({
@@ -56,6 +56,7 @@ class ListingController {
     });
   }
 
+  // TODO:
   async getListingDetails(req: Request, res: Response) {
     const newListing = await ListingService.createNewListing({
       ...req.body,

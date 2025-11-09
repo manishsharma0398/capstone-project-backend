@@ -11,16 +11,20 @@ if (!Env.IS_DB_SEEDING) {
 
 async function resetTable(db: db, table: Table) {
   return db.execute(
-    sql.raw(`TRUNCATE TABLE ${getTableName(table)} RESTART IDENTITY CASCADE`)
+    sql.raw(`TRUNCATE TABLE ${getTableName(table)} RESTART IDENTITY CASCADE`),
   );
 }
 
 const startDBSeeding = async () => {
-  for (const table of [schema.users]) {
+  for (const table of [
+    schema.skills,
+    // schema.users
+  ]) {
     await resetTable(db, table);
   }
 
-  await seeds.user(db);
+  await seeds.skills(db);
+  // await seeds.user(db);
 
   await pool.end();
 };

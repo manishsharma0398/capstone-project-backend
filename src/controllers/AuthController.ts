@@ -65,7 +65,7 @@ class AuthController {
   async registerWithEmail(req: Request, res: Response) {
     const user = await AuthService.registerWithEmail(req.body);
 
-    AuthTokenManager.issueToken({
+    const jwtToken = AuthTokenManager.issueToken({
       payload: {
         userId: user.id,
         role: user.role,
@@ -77,7 +77,7 @@ class AuthController {
     return ApiResponse.success({
       req,
       res,
-      data: user,
+      data: { user, jwtToken },
       statusCode: StatusCodes.CREATED,
       message: "User created Successfully",
       code: CustomStatusCodes.USER_SUCCESSFULLY_CREATED,

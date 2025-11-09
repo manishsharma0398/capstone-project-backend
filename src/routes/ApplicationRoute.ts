@@ -24,25 +24,25 @@ class ApplicationRoutes {
     return ApplicationController.createApplication(req, res);
   }
 
-  // Fetch a single application’s details
-  @Route("get", "/:applicationId", authenticateJWT)
-  @Validate(getSingleApplicationSchemaObject.schema)
-  @OpenApi(getSingleApplicationSchemaObject)
-  getSingleApplication(req: Request, res: Response) {
-    return ApplicationController.getSingleApplication(req, res);
+  // Get all applications for a volunteer
+  @Route("get", "/user", authenticateJWT, authorizeRoles(UserRole.VOLUNTEER))
+  @Validate(listApplicationsByUserSchemaObject.schema)
+  @OpenApi(listApplicationsByUserSchemaObject)
+  listApplicationsByUser(req: Request, res: Response) {
+    return ApplicationController.listApplicationsByUser(req, res);
   }
 
   // Get all applications for a volunteer
   @Route(
     "get",
-    "/user/:userId",
+    "/organization",
     authenticateJWT,
-    authorizeRoles(UserRole.ADMIN, UserRole.VOLUNTEER),
+    authorizeRoles(UserRole.ORGANIZATION),
   )
   @Validate(listApplicationsByUserSchemaObject.schema)
   @OpenApi(listApplicationsByUserSchemaObject)
-  listApplicationsByUser(req: Request, res: Response) {
-    return ApplicationController.listApplicationsByUser(req, res);
+  listApplicationsByOrganization(req: Request, res: Response) {
+    return ApplicationController.listApplicationsByOrganization(req, res);
   }
 
   // Get all applications for a specific listing (organization/admin)
@@ -64,6 +64,14 @@ class ApplicationRoutes {
   @OpenApi(getAllApplicationsSchemaObject)
   getAllApplications(req: Request, res: Response) {
     return ApplicationController.getAllApplications(req, res);
+  }
+
+  // Fetch a single application’s details
+  @Route("get", "/:applicationId", authenticateJWT)
+  @Validate(getSingleApplicationSchemaObject.schema)
+  @OpenApi(getSingleApplicationSchemaObject)
+  getSingleApplication(req: Request, res: Response) {
+    return ApplicationController.getSingleApplication(req, res);
   }
 
   // Volunteer withdraws or Admin deletes an application

@@ -81,23 +81,10 @@ export class ApplicationService {
   static async listApplicationsByUser(data: {
     offset: number;
     limit: number;
-    queriedUserId: number;
-    loggedInUserId: number;
-    role: UserRole;
+    userId: number;
   }) {
-    if (
-      data.role !== UserRole.ADMIN &&
-      data.loggedInUserId !== data.queriedUserId
-    ) {
-      throw new AppError({
-        statusCode: StatusCodes.FORBIDDEN,
-        code: ReasonPhrases.FORBIDDEN,
-        message: "You are not authorized to view other users' applications.",
-      });
-    }
-
     const userExists = await db.query.users.findFirst({
-      where: eq(users.id, data.queriedUserId),
+      where: eq(users.id, data.userId),
       columns: { id: true },
     });
 
@@ -105,7 +92,7 @@ export class ApplicationService {
       throw new AppError({
         statusCode: StatusCodes.NOT_FOUND,
         code: ReasonPhrases.NOT_FOUND,
-        message: `User #${data.queriedUserId} not found.`,
+        message: `User #${data.userId} not found.`,
       });
     }
 
@@ -126,17 +113,17 @@ export class ApplicationService {
         FROM ${applications} a
         JOIN ${listings} l ON a.listing_id = l.id
         JOIN ${users} u on l.organization_id = u.id
-        WHERE a.volunteer_id = ${data.queriedUserId}
-        ORDER BY a.id ASC
+        WHERE a.volunteer_id = ${data.userId}
+        ORDER BY a.created_at DESC
         LIMIT ${data.limit} 
         OFFSET ${data.offset}
       )
       SELECT json_build_object(
-        'items', json_agg(data),
+        'items', COALESCE(json_agg(data), '[]'::json),
         'total', (
            SELECT COUNT(*)::int 
             FROM ${applications} a 
-            WHERE a.volunteer_id = ${data.queriedUserId}
+            WHERE a.volunteer_id = ${data.userId}
         )
       )::json AS result
       FROM data;
@@ -149,6 +136,66 @@ export class ApplicationService {
         statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
         code: ReasonPhrases.INTERNAL_SERVER_ERROR,
         message: "Error retrieving applications for the specified user.",
+      });
+    }
+
+    // Parse JSON string manually
+    const parsed = allApplications.rows?.[0]?.result ?? {
+      items: [],
+      total: 0,
+    };
+
+    return parsed;
+  }
+
+  static async listApplicationsByOrganization(data: {
+    offset: number;
+    limit: number;
+    userId: number;
+  }) {
+    const userExists = await db.query.users.findFirst({
+      where: eq(users.id, data.userId),
+      columns: { id: true },
+    });
+
+    if (!userExists) {
+      throw new AppError({
+        statusCode: StatusCodes.NOT_FOUND,
+        code: ReasonPhrases.NOT_FOUND,
+        message: `User #${data.userId} not found.`,
+      });
+    }
+
+    const query = sql`
+      WITH data AS (
+        SELECT a.*, l.*, u.first_name, u.last_name
+        FROM ${applications} AS a
+        JOIN ${listings} AS l ON a.listing_id = l.id
+        JOIN ${users} AS u ON u.id = a.volunteer_id
+        WHERE l.organization_id = ${data.userId}
+        ORDER BY a.created_at DESC
+        LIMIT ${data.limit}
+        OFFSET ${data.offset}
+      )
+      SELECT json_build_object(
+        'items', COALESCE(json_agg(data), '[]'::json),
+        'total', (
+          SELECT COUNT(*) 
+          FROM ${applications} AS a
+          JOIN ${listings} AS l ON a.listing_id = l.id
+          WHERE l.organization_id = ${data.userId}
+        )
+      ) AS result
+      FROM data;
+      `;
+
+    const allApplications = await db.execute(query);
+
+    if (!allApplications) {
+      throw new AppError({
+        statusCode: StatusCodes.INTERNAL_SERVER_ERROR,
+        code: ReasonPhrases.INTERNAL_SERVER_ERROR,
+        message: "Error retrieving applications for volunteer.",
       });
     }
 

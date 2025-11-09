@@ -24,6 +24,8 @@ import {
   AuthRoutes,
   ListingRoutes,
   ApplicationRoutes,
+  SkillRoutes,
+  MediaRoutes,
 } from "@/routes";
 
 // docs
@@ -47,7 +49,17 @@ initializePassport();
 app.use(loggingMiddleware);
 
 // Routes
-defineRoutes([MainRoutes, AuthRoutes, ListingRoutes, ApplicationRoutes], app);
+defineRoutes(
+  [
+    MainRoutes,
+    AuthRoutes,
+    ListingRoutes,
+    ApplicationRoutes,
+    SkillRoutes,
+    MediaRoutes,
+  ],
+  app,
+);
 
 // Setup Swagger
 setupSwagger(app);
